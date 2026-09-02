@@ -1,0 +1,12 @@
+{
+  "name": "Tranzitta",
+  "short_name": "Tranzitta",
+  "description": "Nigeria's Safety-First Ride Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF0E4",
+  "theme_color": "#D96B1F",
+  "icons": [
+    { "src": "/tranzitta-logo.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
