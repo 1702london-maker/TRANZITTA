@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
-import StickyBar from '@/components/StickyBar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 
@@ -231,7 +230,6 @@ export default function SchoolPage() {
 
   return (
     <>
-      <StickyBar />
       <Navbar />
       <main style={{ paddingTop: 54 }}>
 

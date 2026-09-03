@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import StickyBar from '@/components/StickyBar'
 
 export const metadata: Metadata = {
   title: 'Tranzitta — Nigeria\'s Safety-First Ride Platform',
@@ -27,7 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body>{children}</body>
+      <body>
+        <StickyBar />
+        {children}
+      </body>
     </html>
   )
 }
