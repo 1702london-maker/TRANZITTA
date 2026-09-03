@@ -90,7 +90,7 @@ export default function SchoolDashboardPage() {
                   </div>
 
                   {/* Today's trips */}
-                  <div className="grid grid-cols-2 divide-x" style={{ divideColor: '#F1F6EA' }}>
+                  <div className="grid grid-cols-2 divide-x divide-[#F1F6EA]">
                     {[
                       { label: '🌅 AM Pickup', ...child.today_am },
                       { label: '🌇 PM Dropoff', ...child.today_pm },
