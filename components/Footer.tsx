@@ -8,9 +8,9 @@ const LINKS = [
   {
     group: 'Platform',
     items: [
-<<<<<<< HEAD
       { label: 'How It Works', href: '/how-it-works' },
       { label: 'Safety', href: '/safety' },
+      { label: 'Live Tracking', href: '/go/track' },
       { label: 'Drive With Us', href: '/driver' },
       { label: 'Contact', href: '#contact' },
     ],
@@ -18,13 +18,11 @@ const LINKS = [
   {
     group: 'Verticals',
     items: [
-=======
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Live Tracking', href: '/go/track' },
-      { label: 'Driver Safety', href: '#safety' },
->>>>>>> 0704f269e7edc2389a478a3c6f466c06d6c931e8
       { label: 'Tranzitta Go', href: '/go' },
       { label: 'Tranzitta School', href: '/school' },
+      { label: 'Corporate', href: '/corporate' },
+      { label: 'Events', href: '/events' },
+      { label: 'Airport', href: '/airport' },
     ],
   },
   {
@@ -32,9 +30,6 @@ const LINKS = [
     items: [
       { label: 'About Tranzitta', href: '/' },
       { label: 'Our Fleet', href: '#fleet' },
-      { label: 'Corporate', href: '/corporate' },
-      { label: 'Events', href: '/events' },
-      { label: 'Airport', href: '/airport' },
     ],
   },
   {
@@ -44,12 +39,8 @@ const LINKS = [
       { label: 'WhatsApp Us', href: '#contact' },
       { label: 'Driver Signup', href: '/driver' },
       { label: 'Ops Login', href: '/ops' },
-<<<<<<< HEAD
       { label: 'Panic Response', href: '/safety' },
       { label: 'Compliance', href: '/ops/dashboard' },
-=======
-      { label: 'Safety Policy', href: '#safety' },
->>>>>>> 0704f269e7edc2389a478a3c6f466c06d6c931e8
     ],
   },
 ]
