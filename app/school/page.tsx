@@ -343,28 +343,28 @@ export default function SchoolPage() {
         </section>
 
         {/* ── PAIN POINTS ── */}
-        <section className="py-20 px-4" style={{ background: '#183024' }}>
+        <section className="py-20 px-4" style={{ background: 'var(--warm-white)' }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <div className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: '#7EA06D' }}>The problem with school buses</div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+              <div className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: '#D96B1F' }}>The problem with school buses</div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ color: '#183024' }}>
                 Lagos parents deserve better.
               </h2>
             </div>
             <div className="space-y-3">
               {PAINS.map((p, i) => (
                 <motion.div key={i}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 items-center p-4 rounded-2xl"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 items-center p-4 rounded-2xl border"
+                  style={{ background: 'white', borderColor: '#DDE9D2' }}
                   initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.08 }} viewport={{ once: true }}>
                   <div className="flex items-start gap-3">
-                    <span className="text-red-400 flex-shrink-0 mt-0.5">✗</span>
-                    <span className="text-sm" style={{ color: '#A8C09A' }}>{p.pain}</span>
+                    <span className="text-red-500 flex-shrink-0 mt-0.5 font-bold">✗</span>
+                    <span className="text-sm" style={{ color: '#65785F' }}>{p.pain}</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-green-400 flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-sm font-semibold text-white">{p.fix}</span>
+                    <span className="flex-shrink-0 mt-0.5 font-bold" style={{ color: '#1F6B46' }}>✓</span>
+                    <span className="text-sm font-semibold" style={{ color: '#183024' }}>{p.fix}</span>
                   </div>
                 </motion.div>
               ))}
@@ -513,24 +513,26 @@ export default function SchoolPage() {
         </section>
 
         {/* ── CTA ── */}
-        <section className="py-24 px-4 text-center" style={{ background: '#183024' }}>
-          <div className="max-w-2xl mx-auto">
-            <div className="text-4xl mb-5">🚗</div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-5 leading-tight">
-              Your child deserves a driver<br />who knows their name.
-            </h2>
-            <p className="text-base mb-2" style={{ color: '#A8C09A' }}>
-              Not a seat on a bus. Not hours of traffic with 40 other children.
-            </p>
-            <p className="text-base mb-10 font-semibold" style={{ color: '#7EC4A0' }}>
-              A dedicated, vetted driver. Three children maximum. Every school day.
-            </p>
-            <Link href="/school/enrol"
-              className="inline-block px-10 py-4 rounded-full font-bold text-base hover:scale-105 transition-transform"
-              style={{ background: 'var(--orange-deep, #D96B1F)', color: 'white', boxShadow: '0 6px 24px rgba(217,107,31,0.35)' }}>
-              Enrol Your Child →
-            </Link>
-            <p className="text-xs mt-4" style={{ color: '#7EA06D' }}>No pricing shown. Private quote within 24 hours.</p>
+        <section className="py-24 px-4" style={{ background: '#F1F6EA' }}>
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="gradient-frame rounded-3xl p-10 sm:p-14">
+              <div className="text-4xl mb-5">🚗</div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold mb-5 leading-tight" style={{ color: '#183024' }}>
+                Your child deserves a driver<br />who knows their name.
+              </h2>
+              <p className="text-base mb-2" style={{ color: '#65785F' }}>
+                Not a seat on a bus. Not hours of traffic with 40 other children.
+              </p>
+              <p className="text-base mb-10 font-semibold" style={{ color: '#1F6B46' }}>
+                A dedicated, vetted driver. Three children maximum. Every school day.
+              </p>
+              <Link href="/school/enrol"
+                className="inline-block px-10 py-4 rounded-full font-bold text-base hover:scale-105 transition-transform"
+                style={{ background: '#D96B1F', color: 'white', boxShadow: '0 6px 24px rgba(217,107,31,0.35)' }}>
+                Enrol Your Child →
+              </Link>
+              <p className="text-xs mt-4" style={{ color: '#65785F' }}>No pricing shown. Private quote within 24 hours.</p>
+            </div>
           </div>
         </section>
 

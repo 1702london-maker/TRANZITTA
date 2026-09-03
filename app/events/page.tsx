@@ -202,49 +202,50 @@ export default function EventsPage() {
       <main style={{ paddingTop: '2.5rem' }}>
 
         {/* ── HERO ───────────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0F1F17 0%, #183024 60%, #1F6B46 100%)', minHeight: '92vh' }}>
-          {/* Subtle grid */}
-          <div className="absolute inset-0 opacity-[0.04]"
-            style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <section className="relative overflow-hidden px-6 py-24 sm:py-32"
+          style={{ background: 'linear-gradient(160deg, #FFF0E4 0%, var(--warm-white) 55%, #EDF6F1 100%)' }}>
+          {/* Grid overlay */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.34) 0 1px, transparent 1px 120px), linear-gradient(0deg, rgba(255,255,255,0.28) 0 1px, transparent 1px 120px)', maskImage: 'linear-gradient(to bottom, black 0%, transparent 76%)' }} />
 
-          {/* Floating accent orbs */}
-          <motion.div className="absolute top-20 right-20 w-72 h-72 rounded-full opacity-10 blur-3xl"
-            style={{ background: '#D96B1F' }}
-            animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 6, repeat: Infinity }} />
-          <motion.div className="absolute bottom-20 left-10 w-56 h-56 rounded-full opacity-10 blur-3xl"
-            style={{ background: '#1F6B46' }}
-            animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 8, repeat: Infinity, delay: 2 }} />
+          {/* Accent orbs */}
+          <motion.div className="absolute top-20 right-20 w-72 h-72 rounded-full opacity-20 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #D96B1F, transparent)' }}
+            animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 6, repeat: Infinity }} />
+          <motion.div className="absolute bottom-10 left-8 w-56 h-56 rounded-full opacity-15 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #1F6B46, transparent)' }}
+            animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 8, repeat: Infinity, delay: 2 }} />
 
-          <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-16 flex flex-col lg:flex-row items-center gap-16">
+          <div className="relative max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
             {/* Left — copy */}
             <div className="flex-1 text-center lg:text-left">
               <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 text-xs font-bold"
-                  style={{ background: 'rgba(217,107,31,0.18)', color: '#D96B1F', border: '1px solid rgba(217,107,31,0.3)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                  style={{ background: 'rgba(31,107,70,0.08)', color: '#1F6B46', border: '1px solid rgba(31,107,70,0.18)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   Bespoke Event Transport · Lagos
                 </div>
 
-                <h1 className="text-4xl md:text-6xl font-black text-white leading-[1.05] mb-6">
+                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-6" style={{ color: '#183024' }}>
                   Your Event.<br />
                   <span style={{ color: '#D96B1F' }}>Zero Chaos.</span><br />
-                  <span style={{ color: '#A8C09A' }}>Every Vehicle.</span>
+                  <span style={{ color: '#1F6B46' }}>Every Vehicle.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0" style={{ color: '#8BA884' }}>
+                <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0" style={{ color: '#65785F' }}>
                   Premium group transport for weddings, corporate events, and celebrations. Police-vetted drivers. Live fleet tracking. QR-verified boarding. Pricing quoted privately — never public.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                   <Link href="/events/enquire"
-                    className="px-8 py-4 rounded-2xl font-black text-white text-lg shadow-xl transition-all hover:scale-105 active:scale-95"
-                    style={{ background: 'linear-gradient(135deg, #D96B1F 0%, #B85A1A 100%)' }}>
+                    className="px-8 py-4 rounded-full font-black text-white text-base shadow-xl transition-all hover:scale-105 active:scale-95"
+                    style={{ background: '#D96B1F', boxShadow: '0 6px 24px rgba(217,107,31,0.32)' }}>
                     Request a Quote →
                   </Link>
                   <a href="https://wa.me/2349000000000?text=Hi%20Tranzitta%20Events%2C%20I%27d%20like%20to%20enquire%20about%20event%20transport"
                     target="_blank" rel="noopener noreferrer"
-                    className="px-8 py-4 rounded-2xl font-bold text-white text-lg border transition-all hover:bg-white/10"
-                    style={{ borderColor: 'rgba(255,255,255,0.3)' }}>
+                    className="px-8 py-4 rounded-full font-bold text-base border-2 transition-all hover:scale-105"
+                    style={{ color: '#1F6B46', borderColor: '#1F6B46', background: 'rgba(255,255,255,0.8)' }}>
                     💬 WhatsApp Ops
                   </a>
                 </div>
@@ -253,7 +254,7 @@ export default function EventsPage() {
                 <div className="flex flex-wrap gap-3 mt-8 justify-center lg:justify-start">
                   {['✓ Police-Vetted Drivers', '✓ QR Boarding', '✓ Live Tracking', '✓ Ops Always On'].map(t => (
                     <span key={t} className="text-xs font-bold px-3 py-1.5 rounded-full"
-                      style={{ background: 'rgba(255,255,255,0.07)', color: '#A8C09A', border: '1px solid rgba(255,255,255,0.12)' }}>
+                      style={{ background: 'rgba(31,107,70,0.08)', color: '#1F6B46', border: '1px solid rgba(31,107,70,0.16)' }}>
                       {t}
                     </span>
                   ))}
@@ -279,7 +280,7 @@ export default function EventsPage() {
                   {FLOW_STEPS.map((step, i) => (
                     <button key={i} onClick={() => setActiveStep(i)}
                       className="relative h-1.5 rounded-full overflow-hidden transition-all"
-                      style={{ width: i === activeStep ? 32 : 12, background: 'rgba(255,255,255,0.2)' }}>
+                      style={{ width: i === activeStep ? 32 : 12, background: 'rgba(31,107,70,0.15)' }}>
                       {i === activeStep && (
                         <motion.div className="absolute inset-0 rounded-full"
                           style={{ transformOrigin: 'left', background: '#D96B1F' }}
@@ -290,8 +291,8 @@ export default function EventsPage() {
                 </div>
 
                 <div className="mt-3 text-center">
-                  <div className="text-sm font-bold text-white">{FLOW_STEPS[activeStep].icon} {FLOW_STEPS[activeStep].label}</div>
-                  <div className="text-xs mt-1" style={{ color: '#8BA884' }}>{FLOW_STEPS[activeStep].desc}</div>
+                  <div className="text-sm font-bold" style={{ color: '#183024' }}>{FLOW_STEPS[activeStep].icon} {FLOW_STEPS[activeStep].label}</div>
+                  <div className="text-xs mt-1" style={{ color: '#65785F' }}>{FLOW_STEPS[activeStep].desc}</div>
                 </div>
               </div>
             </motion.div>
@@ -299,7 +300,7 @@ export default function EventsPage() {
         </section>
 
         {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#FAFDF7' }}>
+        <section className="py-24 px-6" style={{ background: 'var(--warm-white)' }}>
           <div className="max-w-5xl mx-auto">
             <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#D96B1F' }}>The Process</div>
@@ -356,15 +357,15 @@ export default function EventsPage() {
         </section>
 
         {/* ── PAIN / COMPARISON ─────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#183024' }}>
+        <section className="py-24 px-6" style={{ background: 'var(--warm-white)' }}>
           <div className="max-w-5xl mx-auto">
             <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#D96B1F' }}>Why Tranzitta Events</div>
-              <h2 className="text-4xl font-black text-white">Before vs After</h2>
+              <h2 className="text-4xl font-black" style={{ color: '#183024' }}>Before vs After</h2>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-px rounded-2xl overflow-hidden border" style={{ borderColor: '#2D4F3C' }}>
-              <div className="p-6" style={{ background: '#0F1F17' }}>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="rounded-2xl p-6 border" style={{ background: 'white', borderColor: '#DDE9D2' }}>
                 <div className="text-sm font-bold mb-5 flex items-center gap-2" style={{ color: '#DC2626' }}>
                   <span className="w-2 h-2 rounded-full bg-red-500" /> Without Tranzitta Events
                 </div>
@@ -372,13 +373,13 @@ export default function EventsPage() {
                   {PAINS.map((p, i) => (
                     <motion.div key={i} className="flex items-start gap-3"
                       initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                      <span className="text-red-500 mt-0.5 text-sm flex-shrink-0">✗</span>
-                      <span className="text-sm" style={{ color: '#8BA884' }}>{p.bad}</span>
+                      <span className="text-red-500 mt-0.5 text-sm flex-shrink-0 font-bold">✗</span>
+                      <span className="text-sm" style={{ color: '#65785F' }}>{p.bad}</span>
                     </motion.div>
                   ))}
                 </div>
               </div>
-              <div className="p-6" style={{ background: '#1A3B2C' }}>
+              <div className="rounded-2xl p-6 border" style={{ background: '#F1F6EA', borderColor: '#DDE9D2' }}>
                 <div className="text-sm font-bold mb-5 flex items-center gap-2" style={{ color: '#1F6B46' }}>
                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> With Tranzitta Events
                 </div>
@@ -386,8 +387,8 @@ export default function EventsPage() {
                   {PAINS.map((p, i) => (
                     <motion.div key={i} className="flex items-start gap-3"
                       initial={{ opacity: 0, x: 16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                      <span className="mt-0.5 text-sm flex-shrink-0" style={{ color: '#1F6B46' }}>✓</span>
-                      <span className="text-sm text-white">{p.good}</span>
+                      <span className="mt-0.5 text-sm flex-shrink-0 font-bold" style={{ color: '#1F6B46' }}>✓</span>
+                      <span className="text-sm font-semibold" style={{ color: '#183024' }}>{p.good}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -397,7 +398,7 @@ export default function EventsPage() {
         </section>
 
         {/* ── PILLARS ───────────────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#FAFDF7' }}>
+        <section className="py-24 px-6" style={{ background: 'var(--warm-white)' }}>
           <div className="max-w-5xl mx-auto">
             <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#D96B1F' }}>Built Different</div>
@@ -449,12 +450,12 @@ export default function EventsPage() {
         </section>
 
         {/* ── CONDUCT RULES ─────────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#183024' }}>
+        <section className="py-24 px-6" style={{ background: '#F1F6EA' }}>
           <div className="max-w-4xl mx-auto">
             <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#D96B1F' }}>Standards</div>
-              <h2 className="text-4xl font-black text-white">Service Rules — Everyone Agrees</h2>
-              <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: '#8BA884' }}>
+              <h2 className="text-4xl font-black" style={{ color: '#183024' }}>Service Rules — Everyone Agrees</h2>
+              <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: '#65785F' }}>
                 These rules protect drivers, passengers, and Tranzitta equally. Accepted by every client at booking.
               </p>
             </motion.div>
@@ -464,14 +465,14 @@ export default function EventsPage() {
                 { cat: 'Vehicle Rules', rules: ['One pickup location only — no multi-stop collections', 'One drop-off location only', 'No food or drink inside vehicles', 'No littering — cleaning charge applies', 'Seatbelts must be worn at all times', 'Maximum passenger count strictly enforced'] },
                 { cat: 'Conduct Rules', rules: ['No arguments with drivers — call ops instead', 'Passenger complaints go to ops, not the driver', 'Any aggressive behaviour by passenger — service may be suspended', 'Driver cannot cancel within 48hrs of event', 'Clock runs from agreed start — not boarding time', '30-minute grace, then excess billing per full hour'] },
               ].map((block, bi) => (
-                <motion.div key={bi} className="rounded-2xl p-7 border"
-                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: '#2D4F3C' }}
+                <motion.div key={bi} className="rounded-2xl p-7 border bg-white"
+                  style={{ borderColor: '#DDE9D2' }}
                   initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: bi * 0.1 }}>
                   <div className="font-extrabold mb-4" style={{ color: '#D96B1F' }}>{block.cat}</div>
                   <div className="space-y-2.5">
                     {block.rules.map((r, ri) => (
-                      <div key={ri} className="flex items-start gap-3 text-sm" style={{ color: '#A8C09A' }}>
-                        <span className="mt-0.5 flex-shrink-0" style={{ color: '#1F6B46' }}>•</span>
+                      <div key={ri} className="flex items-start gap-3 text-sm" style={{ color: '#65785F' }}>
+                        <span className="mt-0.5 flex-shrink-0 font-bold" style={{ color: '#1F6B46' }}>•</span>
                         {r}
                       </div>
                     ))}
@@ -483,7 +484,7 @@ export default function EventsPage() {
         </section>
 
         {/* ── DRIVER JOBS ───────────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#FAFDF7' }}>
+        <section className="py-24 px-6" style={{ background: 'var(--warm-white)' }}>
           <div className="max-w-4xl mx-auto">
             <motion.div className="rounded-3xl p-10 md:p-14 flex flex-col md:flex-row items-center gap-10 border"
               style={{ background: 'white', borderColor: '#DDE9D2' }}
@@ -519,6 +520,7 @@ export default function EventsPage() {
 
         {/* ── FAQ ───────────────────────────────────────────────────────────── */}
         <section className="py-24 px-6" style={{ background: '#F1F6EA' }}>
+
           <div className="max-w-3xl mx-auto">
             <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#1F6B46' }}>Questions</div>
@@ -549,26 +551,27 @@ export default function EventsPage() {
         </section>
 
         {/* ── CTA ───────────────────────────────────────────────────────────── */}
-        <section className="py-24 px-6" style={{ background: '#183024' }}>
+        <section className="py-24 px-6" style={{ background: '#F1F6EA' }}>
           <div className="max-w-3xl mx-auto text-center">
-            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.div className="gradient-frame rounded-3xl p-10 sm:p-14"
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-5xl mb-6">🎉</div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-5">
+              <h2 className="text-4xl md:text-5xl font-black mb-5" style={{ color: '#183024' }}>
                 Your Event Deserves<br />
                 <span style={{ color: '#D96B1F' }}>Zero Compromise.</span>
               </h2>
-              <p className="text-lg mb-10" style={{ color: '#8BA884' }}>
+              <p className="text-lg mb-10" style={{ color: '#65785F' }}>
                 Submit your event enquiry. Ops will map your route and send you a private bespoke quote within hours. No public pricing, no pressure.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/events/enquire"
-                  className="px-10 py-5 rounded-2xl font-black text-white text-xl shadow-2xl transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'linear-gradient(135deg, #D96B1F 0%, #B85A1A 100%)' }}>
+                  className="px-10 py-4 rounded-full font-black text-white text-base shadow-xl transition-all hover:scale-105 active:scale-95"
+                  style={{ background: '#D96B1F', boxShadow: '0 6px 24px rgba(217,107,31,0.35)' }}>
                   Request a Quote →
                 </Link>
                 <Link href="/events/dashboard"
-                  className="px-10 py-5 rounded-2xl font-bold text-white text-xl border transition-all hover:bg-white/10"
-                  style={{ borderColor: 'rgba(255,255,255,0.3)' }}>
+                  className="px-10 py-4 rounded-full font-bold text-base border-2 transition-all hover:scale-105"
+                  style={{ color: '#1F6B46', borderColor: '#1F6B46', background: 'rgba(255,255,255,0.7)' }}>
                   My Bookings
                 </Link>
               </div>
