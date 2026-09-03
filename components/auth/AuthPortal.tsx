@@ -19,6 +19,16 @@ const iconMap = {
   shield: ShieldCheck,
 }
 
+const portalChoices: Array<{ key: PortalKey; label: string }> = [
+  { key: 'go', label: 'Go' },
+  { key: 'school', label: 'School' },
+  { key: 'corporate', label: 'Corporate' },
+  { key: 'events', label: 'Events' },
+  { key: 'airport', label: 'Airport' },
+  { key: 'driver', label: 'Driver' },
+  { key: 'ops', label: 'Ops' },
+]
+
 export default function AuthPortal({ portal }: { portal: PortalKey }) {
   const config = portalConfig[portal]
   const router = useRouter()
@@ -151,6 +161,19 @@ export default function AuthPortal({ portal }: { portal: PortalKey }) {
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-white" style={{ background: config.accent }}>
                 <Icon size={23} />
               </span>
+            </div>
+
+            <div className="mb-5 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {portalChoices.map((choice) => (
+                <Link
+                  key={choice.key}
+                  href={portalConfig[choice.key].loginPath}
+                  className="rounded-xl px-3 py-2 text-center text-[11px] font-black transition"
+                  style={{ background: choice.key === portal ? config.accent : '#F1F6EA', color: choice.key === portal ? '#FFFFFF' : '#65785F' }}
+                >
+                  {choice.label}
+                </Link>
+              ))}
             </div>
 
             {mode === 'signup' ? (

@@ -42,7 +42,7 @@ export default function Navbar() {
             <Globe2 size={17} /> EN
           </button>
           <Link href="#contact" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Contact Us</Link>
-          <Link href="/go/login" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Login</Link>
+          <Link href="/login" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Login</Link>
           <Link href="/go"
             className="px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-105"
             style={{ background: 'var(--orange-deep)', boxShadow: '0 4px 14px rgba(217,107,31,0.28)' }}>
@@ -67,7 +67,7 @@ export default function Navbar() {
           <Link href="/safety" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Safety</Link>
           <button className="flex w-full items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }}><Globe2 size={16} /> Language: EN</button>
           <Link href="#contact" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Contact Us</Link>
-          <Link href="/go/login" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Login</Link>
+          <Link href="/login" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Login</Link>
           <div className="border-t pt-2 mt-2" style={{ borderColor: 'var(--sage-border)' }}>
             <Link href="/driver" className="block py-2.5 px-3 rounded-xl text-sm font-semibold" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Drive With Us</Link>
             <Link href="/go" className="block mt-2 py-3 px-4 rounded-full text-sm font-bold text-white text-center" style={{ background: 'var(--orange-deep)' }} onClick={() => setMobileOpen(false)}>Sign Up</Link>
