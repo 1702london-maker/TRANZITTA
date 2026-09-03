@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Apple, Facebook, Instagram, Linkedin, MessageCircle, Music2, Play, ShieldCheck, Youtube } from 'lucide-react'
+import { Apple, Facebook, Instagram, Linkedin, Play, ShieldCheck } from 'lucide-react'
 
 const LINKS = [
   {
@@ -51,9 +51,6 @@ const SOCIALS = [
   { label: 'Facebook', href: '#', icon: Facebook },
   { label: 'Instagram', href: '#', icon: Instagram },
   { label: 'LinkedIn', href: '#', icon: Linkedin },
-  { label: 'YouTube', href: '#', icon: Youtube },
-  { label: 'TikTok', href: '#', icon: Music2 },
-  { label: 'WhatsApp', href: '#contact', icon: MessageCircle },
 ]
 
 function StoreBadge({
@@ -115,8 +112,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:items-start">
           <div>
             <Image src="/tranzitta-logo.png" alt="Tranzitta" width={190} height={58} className="mb-5 h-12 w-auto object-contain" />
-            <p className="max-w-[230px] text-sm font-semibold leading-6 trz-muted">
-              © 2026 Tranzitta BY Budruum Ltd. All rights reserved.
+            <p className="max-w-[230px] text-sm leading-7 trz-muted">
+              Safe, vetted rides across Lagos. One platform for Go, School, Corporate, Events and Airport.
             </p>
             <div className="mt-5 flex max-w-[230px] flex-wrap gap-2.5">
               {SOCIALS.map((social) => {

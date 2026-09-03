@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import LocationInput from '@/components/go/LocationInput'
 import RoutePreviewMap from '@/components/go/RoutePreviewMap'
@@ -34,6 +35,7 @@ function GoBookShellFallback() {
           </div>
         </div>
       </main>
+      <Footer />
       <WhatsAppButton />
     </>
   )

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import StickyBar from '@/components/StickyBar'
 import FloatingVerticalBar from '@/components/FloatingVerticalBar'
+import GlobalChrome from '@/components/GlobalChrome'
 
 export const metadata: Metadata = {
   title: 'Tranzitta — Nigeria\'s Safety-First Ride Platform',
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <StickyBar />
-        {children}
+        <GlobalChrome>{children}</GlobalChrome>
         <FloatingVerticalBar />
       </body>
     </html>
