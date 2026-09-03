@@ -3,18 +3,9 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const VERTICALS = [
-  { label: 'Tranzitta Go', href: '/go', desc: 'Everyday rides' },
-  { label: 'Tranzitta School', href: '/school', desc: 'School pickup & drop-off' },
-  { label: 'Tranzitta Corporate', href: '/corporate', desc: 'Company shuttles' },
-  { label: 'Tranzitta Events', href: '/events', desc: 'Events & buses' },
-  { label: 'Tranzitta Airport', href: '/airport', desc: 'Airport transfers' },
-]
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -35,29 +26,8 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-6">
-          <div className="relative"
-            onMouseEnter={() => setDropdownOpen(true)}
-            onMouseLeave={() => setDropdownOpen(false)}
-          >
-            <button className="nav-link text-sm font-semibold flex items-center gap-1.5" style={{ color: 'var(--text-main)' }}>
-              Verticals
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-            {dropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl shadow-xl border py-2 z-50"
-                style={{ background: 'rgba(255,249,242,0.98)', borderColor: 'var(--sage-border)', backdropFilter: 'blur(14px)' }}>
-                {VERTICALS.map(v => (
-                  <Link key={v.href} href={v.href}
-                    className="flex flex-col px-4 py-3 hover:bg-orange-50 transition-colors">
-                    <span className="text-sm font-bold" style={{ color: 'var(--text-main)' }}>{v.label}</span>
-                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{v.desc}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-          <Link href="#safety" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Safety</Link>
           <Link href="#how-it-works" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>How It Works</Link>
+          <Link href="#safety" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Safety</Link>
           <Link href="/driver" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Drive With Us</Link>
           <Link href="#contact" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Contact</Link>
         </div>
@@ -84,14 +54,9 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="lg:hidden border-t px-4 py-4 space-y-2 trz-mobile-menu" style={{ borderColor: 'var(--sage-border)' }}>
-          {VERTICALS.map(v => (
-            <Link key={v.href} href={v.href}
-              className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors"
-              style={{ color: 'var(--text-main)' }}
-              onClick={() => setMobileOpen(false)}>
-              {v.label}
-            </Link>
-          ))}
+          <Link href="#how-it-works" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>How It Works</Link>
+          <Link href="#safety" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Safety</Link>
+          <Link href="#contact" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Contact</Link>
           <div className="border-t pt-2 mt-2" style={{ borderColor: 'var(--sage-border)' }}>
             <Link href="/driver" className="block py-2.5 px-3 rounded-xl text-sm font-semibold" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Drive With Us</Link>
             <Link href="/go" className="block mt-2 py-3 px-4 rounded-full text-sm font-bold text-white text-center" style={{ background: 'var(--orange-deep)' }} onClick={() => setMobileOpen(false)}>Book a Ride</Link>
