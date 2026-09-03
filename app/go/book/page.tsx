@@ -1,7 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import StickyBar from '@/components/StickyBar'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -13,10 +14,43 @@ const VEHICLE_TYPES = [
 ]
 
 export default function GoBookPage() {
-  const [step, setStep] = useState<'route' | 'vehicle' | 'confirm'>('route')
+  return (
+    <Suspense fallback={<GoBookShellFallback />}>
+      <GoBookFlow />
+    </Suspense>
+  )
+}
+
+function GoBookShellFallback() {
+  return (
+    <>
+      <StickyBar />
+      <Navbar />
+      <main className="min-h-screen flex flex-col items-center pt-20 pb-16 px-4" style={{ background: 'var(--warm-white)' }}>
+        <div className="w-full max-w-md">
+          <div className="trz-card rounded-2xl p-6 text-center">
+            <p className="text-sm font-semibold trz-muted">Loading your route...</p>
+          </div>
+        </div>
+      </main>
+      <WhatsAppButton />
+    </>
+  )
+}
+
+function GoBookFlow() {
+  const searchParams = useSearchParams()
+  const [step, setStep] = useState<'route' | 'locked'>('route')
   const [pickup, setPickup] = useState('')
   const [dropoff, setDropoff] = useState('')
-  const [vehicle, setVehicle] = useState('standard')
+
+  useEffect(() => {
+    setPickup(searchParams.get('pickup') || '')
+    setDropoff(searchParams.get('dropoff') || '')
+  }, [searchParams])
+
+  const hasRoute = pickup.trim().length > 2 && dropoff.trim().length > 2
+  const authHref = `/go/login?pickup=${encodeURIComponent(pickup)}&dropoff=${encodeURIComponent(dropoff)}`
 
   return (
     <>
@@ -26,9 +60,9 @@ export default function GoBookPage() {
         <div className="w-full max-w-md">
           {/* Progress */}
           <div className="flex gap-2 mb-8">
-            {['Route', 'Vehicle', 'Confirm'].map((s, i) => (
+            {['Route', 'Register', 'Match'].map((s, i) => (
               <div key={i} className="flex-1 h-1.5 rounded-full" style={{
-                background: i <= ['route', 'vehicle', 'confirm'].indexOf(step) ? 'var(--orange-deep)' : 'var(--sage-border)'
+                background: i <= ['route', 'locked'].indexOf(step) ? 'var(--orange-deep)' : 'var(--sage-border)'
               }} />
             ))}
           </div>
@@ -48,67 +82,61 @@ export default function GoBookPage() {
                     placeholder="Dropoff location" value={dropoff} onChange={e => setDropoff(e.target.value)} />
                 </div>
               </div>
-              <button onClick={() => setStep('vehicle')}
-                className="w-full py-4 rounded-xl font-bold text-white text-sm hover:scale-105 transition-transform"
+              <button onClick={() => setStep('locked')}
+                disabled={!hasRoute}
+                className="w-full py-4 rounded-xl font-bold text-white text-sm transition-transform enabled:hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ background: 'var(--orange-deep)' }}>
-                Find Drivers →
+                Continue to Driver Matching →
               </button>
+              <p className="mt-3 text-center text-xs trz-muted">You can enter your trip first. Matched drivers unlock after registration.</p>
             </motion.div>
           )}
 
-          {step === 'vehicle' && (
+          {step === 'locked' && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-2xl font-extrabold trz-ink mb-6">Choose ride</h1>
-              <div className="space-y-3 mb-5">
+              <h1 className="text-2xl font-extrabold trz-ink mb-2">Create your Tranzitta account</h1>
+              <p className="text-sm trz-muted mb-6">For safety, we verify riders before showing driver names, plates, ratings and live availability.</p>
+              <div className="trz-card rounded-2xl p-5 mb-5 space-y-3">
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="trz-muted">Pickup</span>
+                  <span className="font-semibold trz-ink text-right">{pickup}</span>
+                </div>
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="trz-muted">Dropoff</span>
+                  <span className="font-semibold trz-ink text-right">{dropoff}</span>
+                </div>
+                <div className="border-t pt-3" style={{ borderColor: 'var(--sage-border)' }}>
+                  <div className="flex justify-between">
+                    <span className="font-semibold trz-ink">Estimated Fare</span>
+                    <span className="font-extrabold trz-orange">₦2,400–₦3,100</span>
+                  </div>
+                  <p className="mt-1 text-xs trz-muted">Driver matching, ETA and vehicle details are visible after login.</p>
+                </div>
+              </div>
+              <div className="mb-5 grid grid-cols-1 gap-3">
                 {VEHICLE_TYPES.map(v => (
-                  <button key={v.id} onClick={() => setVehicle(v.id)}
-                    className="w-full text-left trz-card rounded-2xl p-4 flex items-center gap-4 transition-all border-2"
-                    style={{ borderColor: vehicle === v.id ? 'var(--orange-deep)' : 'transparent' }}>
+                  <div key={v.id}
+                    className="w-full text-left trz-card rounded-2xl p-4 flex items-center gap-4 opacity-75">
                     <span className="text-2xl">{v.icon}</span>
                     <div className="flex-1">
                       <div className="font-extrabold trz-ink">{v.label}</div>
                       <div className="text-xs trz-muted">{v.desc}</div>
                     </div>
                     <div className="font-bold trz-orange text-sm">{v.price}</div>
-                  </button>
+                  </div>
                 ))}
               </div>
-              <button onClick={() => setStep('confirm')}
+              <Link href={authHref}
+                className="block w-full py-4 rounded-xl font-bold text-white text-sm text-center"
+                style={{ background: 'var(--orange-deep)' }}>
+                Login to See Matching Drivers →
+              </Link>
+              <Link href={authHref}
                 className="w-full py-4 rounded-xl font-bold text-white text-sm"
-                style={{ background: 'var(--orange-deep)' }}>
-                Confirm Vehicle →
-              </button>
-            </motion.div>
-          )}
-
-          {step === 'confirm' && (
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-2xl font-extrabold trz-ink mb-6">Confirm booking</h1>
-              <div className="trz-card rounded-2xl p-6 mb-5 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="trz-muted">Pickup</span>
-                  <span className="font-semibold trz-ink">{pickup || 'Lekki Phase 1'}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="trz-muted">Dropoff</span>
-                  <span className="font-semibold trz-ink">{dropoff || 'Victoria Island'}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="trz-muted">Vehicle</span>
-                  <span className="font-semibold trz-ink capitalize">{vehicle}</span>
-                </div>
-                <div className="border-t pt-3" style={{ borderColor: 'var(--sage-border)' }}>
-                  <div className="flex justify-between">
-                    <span className="font-semibold trz-ink">Estimated Fare</span>
-                    <span className="font-extrabold trz-orange">₦2,750</span>
-                  </div>
-                </div>
-              </div>
-              <button className="w-full py-4 rounded-xl font-bold text-white text-sm hover:scale-105 transition-transform"
-                style={{ background: 'var(--orange-deep)' }}>
-                Book & Pay via Paystack →
-              </button>
-              <p className="text-xs trz-muted text-center mt-3">Panic button available throughout your trip</p>
+                style={{ background: 'var(--text-main)', marginTop: 10 }}>
+                Create Account
+              </Link>
+              <button onClick={() => setStep('route')} className="w-full mt-3 text-xs trz-muted text-center">← Edit route</button>
             </motion.div>
           )}
         </div>
