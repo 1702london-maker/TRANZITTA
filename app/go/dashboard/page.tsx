@@ -1,307 +1,208 @@
 'use client'
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { createBrowserSupabase } from '@/lib/supabase'
 
-type TabKey = 'active' | 'track' | 'history' | 'account'
-
-const MOCK_TRIP = {
-  id: 'tr-7821-a',
-  tier: 'go',
-  status: 'driver_en_route',
-  pickup: 'Murtala Mohammed Way, Victoria Island',
-  dropoff: 'Lekki Phase 1, Lagos',
-  estimated_fare: 4200,
-  surge_multiplier: 1.2,
-  payment_method: 'card_hold',
-  driver: {
-    name: 'Taiwo Kolawole',
-    initials: 'TK',
-    vehicle: 'Toyota Corolla — Silver',
-    plate: 'ABJ-405-KL',
-    rating: 4.8,
-    eta_min: 4,
-    verified: true,
-  },
-  rider_verified: false,
-  driver_verified: false,
+type GoTrip = {
+  id: string
+  tier: string | null
+  status: string
+  pickup_address: string
+  dropoff_address: string
+  estimated_fare: number | null
+  total_fare: number | null
+  surge_multiplier: number | null
+  payment_method: string
+  payment_status: string
+  requested_at: string
+  rider_verified_driver: boolean
+  driver_verified_rider: boolean
+  driver: any
 }
 
-const MOCK_HISTORY = [
-  { id: 'tr-7690', date: '2026-08-28', tier: 'executive', from: 'Ikoyi', to: 'Murtala Muhammed Airport', fare: 8500, status: 'completed', rating: 5 },
-  { id: 'tr-7512', date: '2026-08-14', tier: 'go', from: 'Yaba', to: 'Victoria Island', fare: 3200, status: 'completed', rating: 4 },
-  { id: 'tr-7401', date: '2026-07-30', tier: 'go', from: 'Lekki', to: 'Surulere', fare: 4100, status: 'completed', rating: 5 },
-]
-
-const MOCK_ACCOUNT = {
-  name: 'Adaora Okafor',
-  phone: '+234 810 234 5678',
-  bvn_verified: true,
-  nin_verified: true,
-  liveness_status: 'verified',
-  liveness_next_due: '2026-11-15',
-  profile_photo: true,
-  agreement_signed: true,
-  verification_status: 'verified',
+type GoDashboard = {
+  profile: { full_name: string; phone: string; role: string }
+  activeTrip: GoTrip | null
+  trips: GoTrip[]
 }
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  requested: { label: 'Searching for driver...', color: '#65785F' },
-  matched: { label: 'Driver Matched', color: '#1F6B46' },
-  driver_en_route: { label: 'Driver En Route', color: '#D96B1F' },
-  verified: { label: 'Verified — In Progress', color: '#1F6B46' },
-  in_progress: { label: 'In Progress', color: '#1F6B46' },
-  completed: { label: 'Completed', color: '#65785F' },
+const tabs = ['Active', 'Track', 'History', 'Account'] as const
+
+const statusColor: Record<string, string> = {
+  requested: '#65785F',
+  matched: '#1F6B46',
+  driver_en_route: '#D96B1F',
+  in_progress: '#1F6B46',
+  completed: '#65785F',
+  cancelled: '#DC2626',
 }
 
 export default function GoDashboardPage() {
-  const [tab, setTab] = useState<TabKey>('active')
-  const [trip, setTrip] = useState(MOCK_TRIP)
+  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>('Active')
+  const [dashboard, setDashboard] = useState<GoDashboard | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
 
-  const st = STATUS_LABELS[trip.status]
+  useEffect(() => {
+    const loadDashboard = async () => {
+      const supabase = createBrowserSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        window.location.href = '/go/login?next=/go/dashboard'
+        return
+      }
 
-  const confirmDriver = () => {
-    setTrip(t => ({ ...t, rider_verified: true }))
-  }
+      const res = await fetch('/api/go/dashboard', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) setMessage(data?.error || 'Could not load your Go dashboard.')
+      else setDashboard(data)
+      setLoading(false)
+    }
+
+    loadDashboard()
+  }, [])
+
+  const activeTrip = dashboard?.activeTrip ?? null
+  const trips = dashboard?.trips ?? []
+  const history = trips.filter((trip) => ['completed', 'cancelled'].includes(trip.status))
 
   return (
     <>
       <Navbar />
       <main className="min-h-screen pb-28" style={{ paddingTop: 90, background: 'var(--warm-white)' }}>
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="text-center py-8">
-            <h1 className="text-2xl font-black mb-1" style={{ color: '#183024' }}>My Rides</h1>
-            <p className="text-sm" style={{ color: '#65785F' }}>Live tracking · Trip history · Account verification</p>
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="py-8 text-center">
+            <h1 className="mb-1 text-2xl font-black trz-ink">My Rides</h1>
+            <p className="text-sm trz-muted">Live trips, ride history and verified account access.</p>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-1.5 mb-6 overflow-x-auto">
-            {([
-              { key: 'active', label: '🚗 Active' },
-              { key: 'track', label: '📍 Track' },
-              { key: 'history', label: '📋 History' },
-              { key: 'account', label: '🪪 Account' },
-            ] as { key: TabKey; label: string }[]).map(t => (
-              <button key={t.key} onClick={() => setTab(t.key)}
-                className="flex-1 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all flex-shrink-0 whitespace-nowrap px-2"
-                style={{ background: tab === t.key ? '#183024' : '#F1F6EA', color: tab === t.key ? 'white' : '#65785F' }}>
-                {t.label}
+          <div className="mb-6 flex gap-1.5 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="flex-1 shrink-0 rounded-2xl px-3 py-2.5 text-xs font-black transition sm:text-sm"
+                style={{ background: activeTab === tab ? '#183024' : '#F1F6EA', color: activeTab === tab ? '#FFFFFF' : '#65785F' }}
+              >
+                {tab}
               </button>
             ))}
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div key={tab} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+          {message ? <Notice>{message}</Notice> : null}
+          {loading ? <Card className="p-8 text-center text-sm font-bold trz-muted">Loading Go dashboard...</Card> : null}
 
-              {/* ACTIVE TAB */}
-              {tab === 'active' && (
-                <div className="space-y-4">
-                  <div className="rounded-2xl border overflow-hidden" style={{ background: 'white', borderColor: '#DDE9D2' }}>
-                    <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: '#DDE9D2', background: '#F1F6EA' }}>
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-wide" style={{ color: '#65785F' }}>
-                          {trip.tier === 'go' ? '🚗 Tranzitta Go' : '⭐ Executive'}
-                        </div>
-                        <div className="font-extrabold" style={{ color: '#183024' }}>{trip.pickup.split(',')[0]} → {trip.dropoff.split(',')[0]}</div>
-                      </div>
-                      <div className="text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ background: st.color }}>
-                        {st.label}
-                      </div>
-                    </div>
-                    <div className="p-5 space-y-3">
-                      {/* Driver */}
-                      <div className="flex items-center gap-4 p-4 rounded-xl border" style={{ borderColor: '#DDE9D2' }}>
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-black"
-                          style={{ background: '#183024' }}>{trip.driver.initials}</div>
-                        <div className="flex-1">
-                          <div className="font-extrabold" style={{ color: '#183024' }}>{trip.driver.name}</div>
-                          <div className="text-sm" style={{ color: '#65785F' }}>{trip.driver.vehicle} · {trip.driver.plate}</div>
-                          <div className="text-sm font-bold" style={{ color: '#D96B1F' }}>⭐ {trip.driver.rating} · BVN Verified ✓</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-xs" style={{ color: '#65785F' }}>ETA</div>
-                          <div className="text-xl font-black" style={{ color: '#183024' }}>{trip.driver.eta_min} min</div>
-                        </div>
-                      </div>
-
-                      {/* Verification */}
-                      <div className="rounded-xl p-4 border" style={{ borderColor: '#DDE9D2', background: '#FAFDF7' }}>
-                        <div className="text-sm font-bold mb-3" style={{ color: '#183024' }}>Mutual Verification</div>
-                        <div className="space-y-2">
-                          {[
-                            { label: 'Driver checked your photo', done: trip.driver_verified },
-                            { label: 'You confirmed driver details', done: trip.rider_verified },
-                          ].map((v, i) => (
-                            <div key={i} className="flex items-center justify-between">
-                              <span className="text-sm" style={{ color: '#65785F' }}>{v.label}</span>
-                              <span className={`text-sm font-bold ${v.done ? '' : 'opacity-40'}`} style={{ color: v.done ? '#1F6B46' : '#65785F' }}>
-                                {v.done ? '✓ Done' : '○ Pending'}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        {!trip.rider_verified && (
-                          <button onClick={confirmDriver}
-                            className="w-full mt-4 py-2.5 rounded-xl font-bold text-sm text-white"
-                            style={{ background: '#183024' }}>
-                            Confirm Driver — Plate {trip.driver.plate} →
-                          </button>
-                        )}
-                        {trip.rider_verified && !trip.driver_verified && (
-                          <div className="mt-3 text-xs text-center" style={{ color: '#65785F' }}>
-                            Waiting for driver to confirm your photo
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Fare */}
-                      <div className="flex justify-between items-center px-4 py-3 rounded-xl" style={{ background: '#F1F6EA' }}>
-                        <div>
-                          <div className="text-xs" style={{ color: '#65785F' }}>Card Hold</div>
-                          <div className="font-black" style={{ color: '#183024' }}>₦{trip.estimated_fare.toLocaleString()}</div>
-                        </div>
-                        {trip.surge_multiplier > 1 && (
-                          <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: '#FFF0E4', color: '#D96B1F' }}>
-                            ⚡ {trip.surge_multiplier}x Surge
-                          </span>
-                        )}
-                        <div className="text-xs" style={{ color: '#65785F' }}>Actual charged at end</div>
-                      </div>
-
-                      <button onClick={() => setTab('track')}
-                        className="w-full py-3 rounded-xl font-bold text-white text-sm"
-                        style={{ background: '#1F6B46' }}>
-                        Track Live →
-                      </button>
-                    </div>
-                  </div>
-                </div>
+          {activeTab === 'Active' ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              {!activeTrip ? (
+                <Card className="p-8 text-center">
+                  <div className="mb-3 text-4xl">🚗</div>
+                  <h2 className="font-black trz-ink">No active ride yet</h2>
+                  <p className="mx-auto mt-2 max-w-sm text-sm trz-muted">Book a ride first. Your matched driver, fare hold and verification status will appear here.</p>
+                  <Link href="/go/book" className="mt-5 inline-block rounded-xl px-6 py-3 text-sm font-black text-white" style={{ background: '#D96B1F' }}>
+                    Book a Ride →
+                  </Link>
+                </Card>
+              ) : (
+                <TripCard trip={activeTrip} active />
               )}
-
-              {/* TRACK TAB */}
-              {tab === 'track' && (
-                <div className="space-y-4">
-                  {/* Live map */}
-                  <div className="rounded-2xl overflow-hidden relative" style={{ height: 220, background: 'linear-gradient(180deg, #D4EBDC, #B8DFCA)' }}>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                      <div className="text-6xl">🗺️</div>
-                    </div>
-                    <motion.div className="absolute text-2xl" style={{ left: '20%', top: '50%' }}
-                      animate={{ x: [0, 60, 120] }} transition={{ duration: 10, repeat: Infinity }}>🚗</motion.div>
-                    <div className="absolute right-8 top-1/2 -translate-y-1/2 text-2xl">📍</div>
-                    <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1F6B46' }}>
-                      ● Live — updates every 10s
-                    </div>
-                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full text-xs font-bold" style={{ background: 'white', color: '#183024' }}>
-                      {trip.driver.eta_min} min ETA
-                    </div>
-                  </div>
-
-                  {/* Driver brief */}
-                  <div className="rounded-2xl border p-5" style={{ background: 'white', borderColor: '#DDE9D2' }}>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-black text-sm" style={{ background: '#183024' }}>
-                        {trip.driver.initials}
-                      </div>
-                      <div>
-                        <div className="font-extrabold" style={{ color: '#183024' }}>{trip.driver.name}</div>
-                        <div className="text-sm" style={{ color: '#65785F' }}>{trip.driver.plate} · {trip.driver.vehicle}</div>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <button className="flex-1 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: '#183024' }}>
-                        📞 Call Driver
-                      </button>
-                      <button className="flex-1 py-2.5 rounded-xl font-bold text-sm border-2" style={{ color: '#183024', borderColor: '#DDE9D2' }}>
-                        👁 Share Trip
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl p-4 text-sm text-center" style={{ background: '#FEE2E2', color: '#DC2626' }}>
-                    <div className="font-bold mb-1">🚨 Panic Button</div>
-                    <div className="text-xs">Press to alert ops and trusted contacts immediately — camera footage preserved</div>
-                  </div>
-                </div>
-              )}
-
-              {/* HISTORY TAB */}
-              {tab === 'history' && (
-                <div className="space-y-3">
-                  {MOCK_HISTORY.map((h, i) => (
-                    <motion.div key={h.id} className="rounded-2xl border p-5" style={{ background: 'white', borderColor: '#DDE9D2' }}
-                      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <div className="font-extrabold text-sm" style={{ color: '#183024' }}>
-                            {h.tier === 'executive' ? '⭐ Executive' : '🚗 Go'} · {h.from} → {h.to}
-                          </div>
-                          <div className="text-xs" style={{ color: '#65785F' }}>{h.date}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-black" style={{ color: '#183024' }}>₦{h.fare.toLocaleString()}</div>
-                          <div className="text-xs" style={{ color: '#D96B1F' }}>{'⭐'.repeat(h.rating)}</div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                  <div className="text-center pt-4">
-                    <Link href="/go/book"
-                      className="inline-block px-6 py-3 rounded-full font-bold text-white text-sm"
-                      style={{ background: '#D96B1F' }}>
-                      Book Another Ride →
-                    </Link>
-                  </div>
-                </div>
-              )}
-
-              {/* ACCOUNT TAB */}
-              {tab === 'account' && (
-                <div className="space-y-4">
-                  <div className="rounded-2xl border p-6" style={{ background: 'white', borderColor: '#DDE9D2' }}>
-                    <div className="font-extrabold mb-4" style={{ color: '#183024' }}>{MOCK_ACCOUNT.name}</div>
-                    <div className="text-sm mb-6" style={{ color: '#65785F' }}>{MOCK_ACCOUNT.phone}</div>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'BVN Verified', done: MOCK_ACCOUNT.bvn_verified },
-                        { label: 'NIN / ID Verified', done: MOCK_ACCOUNT.nin_verified },
-                        { label: 'Liveness Check', done: MOCK_ACCOUNT.liveness_status === 'verified' },
-                        { label: 'Profile Photo', done: MOCK_ACCOUNT.profile_photo },
-                        { label: 'User Agreement Signed', done: MOCK_ACCOUNT.agreement_signed },
-                      ].map((v, i) => (
-                        <div key={i} className="flex items-center justify-between py-2 border-b last:border-0" style={{ borderColor: '#F1F6EA' }}>
-                          <span className="text-sm" style={{ color: '#65785F' }}>{v.label}</span>
-                          <span className="text-sm font-bold" style={{ color: v.done ? '#1F6B46' : '#DC2626' }}>
-                            {v.done ? '✓ Verified' : '✗ Required'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border p-5" style={{ background: '#F1F6EA', borderColor: '#DDE9D2' }}>
-                    <div className="text-sm font-bold mb-1" style={{ color: '#183024' }}>Liveness Re-check Due</div>
-                    <div className="text-sm" style={{ color: '#65785F' }}>
-                      {MOCK_ACCOUNT.liveness_next_due} — you&apos;ll be notified 7 days before. Takes under 2 minutes.
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border p-5" style={{ background: 'white', borderColor: '#DDE9D2' }}>
-                    <div className="text-sm font-bold mb-2" style={{ color: '#183024' }}>Verification Status</div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold"
-                      style={{ background: '#F1F6EA', color: '#1F6B46' }}>
-                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                      Fully Verified — Bookings Enabled
-                    </div>
-                  </div>
-                </div>
-              )}
-
             </motion.div>
-          </AnimatePresence>
+          ) : null}
+
+          {activeTab === 'Track' ? (
+            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="relative h-64 overflow-hidden rounded-2xl border" style={{ borderColor: '#DDE9D2', background: 'linear-gradient(135deg, #D4EBDC, #F1F6EA)' }}>
+                <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'linear-gradient(rgba(31,107,70,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(31,107,70,0.22) 1px, transparent 1px)', backgroundSize: '36px 36px' }} />
+                <div className="absolute left-5 top-5 rounded-full px-3 py-1 text-xs font-black text-white" style={{ background: '#1F6B46' }}>Lagos live tracking</div>
+                {activeTrip ? (
+                  <>
+                    <motion.div className="absolute text-3xl" style={{ left: '22%', top: '48%' }} animate={{ x: [0, 95, 145] }} transition={{ duration: 9, repeat: Infinity }}>🚗</motion.div>
+                    <div className="absolute right-10 top-1/2 text-3xl">📍</div>
+                  </>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-center text-sm font-bold trz-muted">No active ride to track.</div>
+                )}
+              </div>
+              {activeTrip ? <TripCard trip={activeTrip} /> : null}
+            </motion.div>
+          ) : null}
+
+          {activeTab === 'History' ? (
+            <motion.div className="space-y-3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              {history.length === 0 ? <Card className="p-8 text-center text-sm font-bold trz-muted">No completed rides yet.</Card> : history.map((trip) => <TripCard key={trip.id} trip={trip} />)}
+            </motion.div>
+          ) : null}
+
+          {activeTab === 'Account' ? (
+            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="p-6">
+                <h2 className="mb-1 font-black trz-ink">{dashboard?.profile.full_name || 'Tranzitta Rider'}</h2>
+                <p className="mb-5 text-sm trz-muted">{dashboard?.profile.phone || 'Phone pending'}</p>
+                {['Role-based login active', 'Trips stored in Supabase', 'Driver matching requires registration'].map((item) => (
+                  <div key={item} className="flex items-center justify-between border-b py-3 text-sm last:border-0" style={{ borderColor: '#F1F6EA' }}>
+                    <span className="trz-muted">{item}</span>
+                    <span className="font-black" style={{ color: '#1F6B46' }}>✓</span>
+                  </div>
+                ))}
+              </Card>
+            </motion.div>
+          ) : null}
         </div>
       </main>
       <Footer />
     </>
   )
+}
+
+function TripCard({ trip, active = false }: { trip: GoTrip; active?: boolean }) {
+  const driverName = trip.driver?.user?.full_name || 'Driver matching'
+  const vehicle = trip.driver?.vehicle ? `${trip.driver.vehicle.make} ${trip.driver.vehicle.model} · ${trip.driver.vehicle.plate_number}` : 'Vehicle appears after matching'
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-start justify-between gap-4 border-b px-5 py-4" style={{ borderColor: '#DDE9D2', background: '#F1F6EA' }}>
+        <div>
+          <p className="text-xs font-black uppercase tracking-wide trz-muted">{trip.tier === 'executive' ? 'Executive' : 'Tranzitta Go'}</p>
+          <h2 className="mt-1 font-black trz-ink">{trip.pickup_address} → {trip.dropoff_address}</h2>
+        </div>
+        <span className="rounded-full px-3 py-1.5 text-xs font-black capitalize text-white" style={{ background: statusColor[trip.status] || '#65785F' }}>
+          {trip.status.replaceAll('_', ' ')}
+        </span>
+      </div>
+      <div className="space-y-4 p-5">
+        {active ? (
+          <div className="flex items-center gap-4 rounded-xl border p-4" style={{ borderColor: '#DDE9D2' }}>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-black text-white" style={{ background: '#183024' }}>
+              {driverName.slice(0, 2).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-black trz-ink">{driverName}</p>
+              <p className="text-sm trz-muted">{vehicle}</p>
+            </div>
+          </div>
+        ) : null}
+        <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: '#F1F6EA' }}>
+          <div>
+            <p className="text-xs capitalize trz-muted">{trip.payment_method}</p>
+            <p className="font-black trz-ink">₦{Number(trip.total_fare ?? trip.estimated_fare ?? 0).toLocaleString()}</p>
+          </div>
+          <p className="text-xs font-bold trz-muted">{new Date(trip.requested_at).toLocaleString()}</p>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-2xl border bg-white ${className}`} style={{ borderColor: '#DDE9D2' }}>{children}</div>
+}
+
+function Notice({ children }: { children: React.ReactNode }) {
+  return <div className="mb-4 rounded-2xl px-4 py-3 text-sm font-bold" style={{ background: '#FFF0E4', color: '#8A3B0E' }}>{children}</div>
 }
