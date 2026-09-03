@@ -484,7 +484,7 @@ export default function SchoolPage() {
             <div className="text-center mt-10">
               <Link href="/school/enrol"
                 className="inline-block px-10 py-4 rounded-full font-bold text-white text-base hover:scale-105 transition-transform"
-                style={{ background: '#1F6B46', boxShadow: '0 6px 24px rgba(31,107,70,0.28)' }}>
+                style={{ background: '#D96B1F', boxShadow: '0 6px 24px rgba(217,107,31,0.28)' }}>
                 Begin Enquiry — No Pricing Shown →
               </Link>
             </div>
@@ -499,7 +499,7 @@ export default function SchoolPage() {
               {faqs.map((faq, i) => (
                 <div key={i} className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: '#DDE9D2' }}>
                   <button onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                    className="w-full flex items-center justify-between p-5 text-left font-bold text-sm hover:bg-green-50 transition-colors"
+                    className="w-full flex items-center justify-between p-5 text-left font-bold text-sm transition-colors hover:bg-[#F1F6EA]"
                     style={{ color: '#183024' }}>
                     <span>{faq.q}</span>
                     <span className="flex-shrink-0 ml-4 text-lg" style={{ color: '#1F6B46' }}>{faqOpen === i ? '−' : '+'}</span>
