@@ -10,14 +10,14 @@ import WhatsAppButton from '@/components/WhatsAppButton'
 function PhoneScreen({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`relative mx-auto ${className}`} style={{ width: 220, height: 440 }}>
-      {/* Phone frame */}
-      <div className="absolute inset-0 rounded-[36px] border-[6px] border-gray-800 bg-gray-900 shadow-2xl overflow-hidden">
-        {/* Notch */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-gray-900 rounded-b-2xl z-10" />
-        {/* Screen */}
-        <div className="absolute inset-0 overflow-hidden">
-          {children}
+      <div className="absolute inset-0 rounded-[36px] border-[6px] shadow-2xl" style={{ borderColor: '#183024', background: '#183024' }} />
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-3 rounded-full" style={{ background: '#0F1F17', zIndex: 10 }} />
+      <div className="absolute inset-[6px] rounded-[30px] overflow-hidden" style={{ background: '#FAFDF7' }}>
+        <div className="flex items-center justify-between px-4 pt-5 pb-1">
+          <span className="text-[8px] font-bold" style={{ color: '#183024' }}>9:41</span>
+          <span className="text-[8px]" style={{ color: '#183024' }}>●●●</span>
         </div>
+        <div className="overflow-hidden" style={{ height: 374 }}>{children}</div>
       </div>
     </div>
   )
@@ -86,19 +86,19 @@ function FlowStep({ step, active }: { step: number; active: boolean }) {
     </div>,
 
     // Step 1: QR scan
-    <div key={1} className="h-full flex flex-col items-center justify-center px-4" style={{ background: '#183024' }}>
+    <div key={1} className="h-full flex flex-col items-center justify-center px-4" style={{ background: '#F4F9F5' }}>
       <motion.div className="text-4xl mb-3"
         animate={{ scale: active ? [1, 1.1, 1] : 1 }}
         transition={{ repeat: Infinity, duration: 1.5 }}>
         📱
       </motion.div>
-      <div className="text-white text-xs font-extrabold text-center mb-4">Scan Driver&apos;s QR Code</div>
+      <div className="text-xs font-extrabold text-center mb-4" style={{ color: '#183024' }}>Scan Driver&apos;s QR Code</div>
       {/* QR placeholder */}
-      <div className="w-28 h-28 bg-white rounded-2xl flex items-center justify-center mb-4 relative overflow-hidden">
-        <div className="text-4xl opacity-30">▩</div>
+      <div className="w-28 h-28 rounded-2xl flex items-center justify-center mb-4 relative overflow-hidden border-2" style={{ background: 'white', borderColor: '#DDE9D2' }}>
+        <div className="text-4xl opacity-20" style={{ color: '#183024' }}>▩</div>
         {/* Scan line */}
         <motion.div className="absolute left-0 right-0 h-0.5"
-          style={{ background: 'rgba(31,107,70,0.6)' }}
+          style={{ background: 'rgba(31,107,70,0.5)' }}
           animate={{ top: active ? ['10%', '90%', '10%'] : '10%' }}
           transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
       </div>
@@ -109,7 +109,7 @@ function FlowStep({ step, active }: { step: number; active: boolean }) {
         transition={{ delay: 1 }}>
         ✓ Driver Verified — Correct
       </motion.div>
-      <p className="text-[9px] text-center mt-3" style={{ color: '#7EA06D' }}>
+      <p className="text-[9px] text-center mt-3" style={{ color: '#65785F' }}>
         Amara cannot enter unless you scan first
       </p>
     </div>,
@@ -235,7 +235,7 @@ export default function SchoolPage() {
 
         {/* ── HERO ── */}
         <section className="relative overflow-hidden px-4 py-24 sm:py-32"
-          style={{ background: 'linear-gradient(160deg, #EDF6F1 0%, var(--warm-white) 60%, #F0F9F4 100%)' }}>
+          style={{ background: 'linear-gradient(160deg, #FFF0E4 0%, var(--warm-white) 55%, #EDF6F1 100%)' }}>
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full opacity-10"
               style={{ background: 'radial-gradient(circle, #1F6B46, transparent)' }} />
