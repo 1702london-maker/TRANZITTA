@@ -251,7 +251,8 @@ export default function SchoolPage() {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6"
                 style={{ color: '#183024' }}>
                 No more school bus.<br />
-                <span style={{ color: '#1F6B46' }}>Your child has<br />their own driver.</span>
+                <span style={{ color: '#D96B1F' }}>Your child has</span><br />
+                <span style={{ color: '#1F6B46' }}>their own driver.</span>
               </h1>
               <p className="text-lg leading-relaxed mb-4" style={{ color: '#65785F' }}>
                 Police-vetted driver. Maximum 3 children per car. QR verification before every pickup.
@@ -263,7 +264,7 @@ export default function SchoolPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link href="/school/enrol"
                   className="px-8 py-4 rounded-full font-bold text-white text-base hover:scale-105 transition-transform text-center"
-                  style={{ background: '#1F6B46', boxShadow: '0 6px 28px rgba(31,107,70,0.32)' }}>
+                  style={{ background: '#D96B1F', boxShadow: '0 6px 28px rgba(217,107,31,0.32)' }}>
                   Enrol Your Child →
                 </Link>
                 <Link href="/school/login"
