@@ -7,22 +7,6 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 
-const contents = [
-  'Acceptance of Terms',
-  'The Platform',
-  'Accounts & Registration',
-  'Bookings & Service Use',
-  'Payments & Pricing',
-  'Cancellations & Refunds',
-  'Safety Obligations',
-  'Driver-Partner Terms',
-  'Intellectual Property',
-  'Limitation of Liability',
-  'Prohibited Conduct',
-  'Governing Law',
-  'Contact Us',
-]
-
 const sections = [
   {
     title: 'Acceptance of Terms',
@@ -190,17 +174,7 @@ export default function TermsPage() {
               </motion.div>
             </div>
 
-            {/* Contents card */}
-            <motion.div {...fade(0.16)} className="rounded-[28px] border bg-white/70 p-6 shadow-xl backdrop-blur" style={{ borderColor: 'var(--sage-border)' }}>
-              <p className="mb-4 text-xs font-black uppercase tracking-[0.18em] trz-muted">Contents</p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {contents.map((item, index) => (
-                  <a key={item} href={`#section-${index + 1}`} className="rounded-xl px-3 py-2 text-sm font-bold trz-ink transition hover:bg-orange-50 hover:text-orange-700">
-                    {String(index + 1).padStart(2, '0')} {item}
-                  </a>
-                ))}
-              </div>
-            </motion.div>
+            <TermsHeroPanel />
           </div>
         </section>
 
@@ -270,6 +244,71 @@ export default function TermsPage() {
       <Footer />
       <WhatsAppButton />
     </>
+  )
+}
+
+function TermsHeroPanel() {
+  const checkpoints = [
+    { icon: ShieldCheck, label: 'Safety rules', value: 'Clear obligations' },
+    { icon: Wallet, label: 'Payments', value: 'Transparent charges' },
+    { icon: HandshakeIcon, label: 'Service use', value: 'Fair agreement' },
+  ]
+
+  return (
+    <motion.div
+      {...fade(0.16)}
+      className="relative min-h-[360px] overflow-hidden rounded-[28px] border bg-white/75 p-6 shadow-xl backdrop-blur"
+      style={{ borderColor: 'var(--sage-border)' }}
+    >
+      <motion.div
+        className="absolute right-8 top-8 h-28 w-28 rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(217,107,31,0.2), rgba(31,107,70,0.08) 62%, transparent 72%)' }}
+        animate={{ scale: [1, 1.08, 1], rotate: [0, 8, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <div className="relative z-10">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] trz-muted">Service Agreement</p>
+            <h2 className="mt-2 text-2xl font-black trz-ink">Simple, fair terms</h2>
+          </div>
+          <motion.span
+            className="flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-lg"
+            style={{ background: 'linear-gradient(135deg, var(--africa-green), var(--orange-deep))' }}
+            animate={{ y: [0, -8, 0], rotate: [0, 4, 0] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Scale size={30} />
+          </motion.span>
+        </div>
+        <div className="rounded-3xl border bg-white/80 p-4" style={{ borderColor: 'var(--sage-border)' }}>
+          <div className="mb-4 flex items-center gap-3 rounded-2xl px-4 py-3" style={{ background: 'var(--sage-light)' }}>
+            <ScrollText size={22} className="trz-orange" />
+            <div>
+              <p className="text-sm font-black trz-ink">One platform, five verticals</p>
+              <p className="text-xs font-bold trz-muted">Go, School, Corporate, Events and Airport.</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {checkpoints.map(({ icon: Icon, label, value }, index) => (
+              <motion.div
+                key={label}
+                className="flex items-center justify-between rounded-2xl border bg-white px-4 py-3"
+                style={{ borderColor: 'var(--sage-border)' }}
+                animate={{ x: [0, index % 2 ? -4 : 4, 0] }}
+                transition={{ duration: 4 + index * 0.4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <span className="flex items-center gap-3 text-sm font-black trz-ink">
+                  <Icon size={18} className="trz-orange" />
+                  {label}
+                </span>
+                <span className="text-xs font-bold trz-muted">{value}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
