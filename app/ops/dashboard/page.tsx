@@ -1,259 +1,345 @@
 'use client'
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { motion } from 'framer-motion'
+import {
+  AlertTriangle,
+  BellRing,
+  Camera,
+  CheckCircle2,
+  ChevronRight,
+  Clock3,
+  FileCheck2,
+  MapPin,
+  PhoneCall,
+  ShieldCheck,
+} from 'lucide-react'
+import { opsStats, opsTabs, type OpsTab } from '@/lib/tranzitta/platform'
+import { PremiumCard } from '@/components/ui/PremiumShell'
 
-type Tab = 'live' | 'panic' | 'drivers' | 'school' | 'corporate' | 'events' | 'compliance' | 'surge'
-
-const MOCK_PANIC = [
-  { id: 1, user: 'Amaka Osei', vertical: 'Go', location: 'Lekki Phase 1', time: '2 min ago', status: 'active' },
-  { id: 2, user: 'James Adeyemi', vertical: 'Corporate', location: 'Victoria Island', time: '18 min ago', status: 'acknowledged' },
+const liveDrivers = [
+  { name: 'Chukwuma Eze', vertical: 'Go', status: 'online', area: 'Lekki Phase 1', eta: '3 min', x: 68, y: 38 },
+  { name: 'Biodun Akinwale', vertical: 'School', status: 'on_trip', area: 'Ikoyi', eta: '8 min', x: 46, y: 48 },
+  { name: 'Taiwo Babatunde', vertical: 'Corporate', status: 'on_trip', area: 'VI', eta: '11 min', x: 57, y: 57 },
+  { name: 'Aisha Musa', vertical: 'Airport', status: 'online', area: 'MMIA', eta: '6 min', x: 26, y: 72 },
 ]
 
-const MOCK_DRIVERS = [
-  { id: 1, name: 'Chukwuma Eze', status: 'pending', vertical: 'Go, School', submitted: '1h ago' },
-  { id: 2, name: 'Biodun Akinwale', status: 'pending', vertical: 'Go', submitted: '3h ago' },
-  { id: 3, name: 'Taiwo Babatunde', status: 'approved', vertical: 'Corporate, Events', submitted: '2d ago' },
+const queueItems = {
+  drivers: [
+    { title: 'Chukwuma Eze', meta: 'Go, School - police report uploaded - home check pending', level: 'High' },
+    { title: 'Biodun Akinwale', meta: 'Go - vehicle inspection complete - camera pending', level: 'Medium' },
+    { title: 'Taiwo Babatunde', meta: 'Corporate, Events - ready for final approval', level: 'Ready' },
+  ],
+  school: [
+    { title: 'Emeka Okonkwo - Greenfield Intl School', meta: 'Lekki home cluster - needs driver assignment and monthly fee', level: 'Quote' },
+    { title: 'Tolu Adeyemi - Corona School', meta: 'Parent accepted quote - first payment pending', level: 'Payment' },
+  ],
+  corporate: [
+    { title: 'Deloitte Nigeria', meta: '48 staff - AM/PM shuttle - VI route cluster', level: 'Contract' },
+    { title: 'Helios Towers', meta: '22 staff - Ikeja route grouping requested', level: 'Rates' },
+  ],
+  events: [
+    { title: 'Adeyemi Wedding', meta: '1 bus + 2 SUVs - 30% deposit quote required', level: 'Quote' },
+    { title: 'Dangote AGM', meta: 'Executive sedans - airport hotel loop', level: 'Fleet' },
+  ],
+  airport: [
+    { title: 'LH 568 Arrival', meta: 'International terminal - meet and greet - Ikoyi dropoff', level: 'Today' },
+    { title: 'BA 075 Departure', meta: 'Victoria Island pickup - international terminal', level: 'Assign' },
+    { title: 'Qatar QR1407 Arrival', meta: 'Flight delay watch - comfort vehicle', level: 'Watch' },
+  ],
+}
+
+const panicAlerts = [
+  { user: 'Amaka Osei', vertical: 'Go', location: 'Lekki Phase 1', status: 'active', age: '2 min', driver: 'Chukwuma Eze' },
+  { user: 'James Adeyemi', vertical: 'Corporate', location: 'Victoria Island', status: 'acknowledged', age: '18 min', driver: 'Taiwo Babatunde' },
 ]
 
-const MOCK_SCHOOL = [
-  { id: 1, parent: 'Mrs Okonkwo', child: 'Emeka Okonkwo', school: 'Greenfield Int\'l School', status: 'enquiry', submitted: '2h ago' },
-  { id: 2, parent: 'Dr Adeyemi', child: 'Tolu Adeyemi', school: 'Corona School', status: 'quoted', submitted: '1d ago' },
-]
-
-const MOCK_STATS = [
-  { label: 'Active Drivers', value: '47', color: '#1F6B46' },
-  { label: 'Active Trips', value: '23', color: '#D96B1F' },
-  { label: 'Panic Alerts', value: '2', color: '#DC2626' },
-  { label: 'Pending Drivers', value: '8', color: '#7C3AED' },
-  { label: 'School Enquiries', value: '5', color: '#0369A1' },
-  { label: 'Today\'s Trips', value: '142', color: '#183024' },
-]
-
-export default function OpsDashboardPage() {
-  const [tab, setTab] = useState<Tab>('live')
-  const [panicActive, setPanicActive] = useState(true)
-
-  const tabs: { id: Tab; label: string; icon: string; badge?: number }[] = [
-    { id: 'live', label: 'Live Map', icon: '🗺️' },
-    { id: 'panic', label: 'Panic Alerts', icon: '🚨', badge: 2 },
-    { id: 'drivers', label: 'Driver Queue', icon: '🧑‍💼', badge: 8 },
-    { id: 'school', label: 'School Queue', icon: '🏫', badge: 5 },
-    { id: 'corporate', label: 'Corporate', icon: '🏢' },
-    { id: 'events', label: 'Events', icon: '🎉' },
-    { id: 'compliance', label: 'Compliance', icon: '📋' },
-    { id: 'surge', label: 'Surge Zones', icon: '⚡' },
-  ]
+function StatusPill({ children, tone = 'orange' }: { children: React.ReactNode; tone?: 'orange' | 'green' | 'red' | 'blue' | 'dark' }) {
+  const colors = {
+    orange: ['#FFF0E4', '#B95418'],
+    green: ['#EAF4E5', '#1F6B46'],
+    red: ['#FEE2E2', '#B91C1C'],
+    blue: ['#E0F2FE', '#0369A1'],
+    dark: ['#183024', '#FFFFFF'],
+  }[tone]
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--warm-white)' }}>
-      {/* Ops header */}
-      <header className="trz-dashboard-header border-b sticky top-0 z-50 flex items-center justify-between px-5 h-14" style={{ borderColor: 'var(--sage-border)' }}>
-        <div className="flex items-center gap-3">
-          <Image src="/tranzitta-logo.png" alt="Tranzitta" width={110} height={32} className="h-7 w-auto object-contain" />
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full trz-high-pill">OPS</span>
+    <span className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-extrabold" style={{ background: colors[0], color: colors[1] }}>
+      {children}
+    </span>
+  )
+}
+
+function QueuePanel({ type }: { type: keyof typeof queueItems }) {
+  const tone = type === 'airport' ? 'blue' : type === 'drivers' ? 'green' : 'orange'
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-black trz-ink capitalize">{type} Queue</h2>
+          <p className="text-sm trz-muted">Review, price, assign and notify from one operational lane.</p>
         </div>
-        <div className="flex items-center gap-3">
-          {panicActive && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold text-white animate-pulse"
-              style={{ background: '#DC2626' }}>
-              🚨 2 Active Panics
+        <StatusPill tone={tone as 'orange' | 'green' | 'blue'}>{queueItems[type].length} open</StatusPill>
+      </div>
+      <div className="grid gap-3">
+        {queueItems[type].map((item) => (
+          <PremiumCard key={item.title} className="p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="font-black trz-ink">{item.title}</h3>
+                <p className="mt-1 text-sm trz-muted">{item.meta}</p>
+              </div>
+              <StatusPill tone={tone as 'orange' | 'green' | 'blue'}>{item.level}</StatusPill>
             </div>
-          )}
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: 'var(--africa-green)' }}>O</div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold text-white" style={{ background: 'var(--africa-green)' }}>
+                <FileCheck2 size={14} /> Review
+              </button>
+              <button className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold trz-blush-pill">
+                Assign <ChevronRight size={14} />
+              </button>
+            </div>
+          </PremiumCard>
+        ))}
+      </div>
+    </motion.div>
+  )
+}
+
+export default function OpsDashboardPage() {
+  const [tab, setTab] = useState<OpsTab>('live')
+  const activePanicCount = useMemo(() => panicAlerts.filter((alert) => alert.status === 'active').length, [])
+
+  return (
+    <div className="min-h-screen" style={{ background: 'var(--warm-white)' }}>
+      <header className="trz-dashboard-header sticky top-0 z-50 border-b px-4 py-3" style={{ borderColor: 'var(--sage-border)' }}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Image src="/tranzitta-logo.png" alt="Tranzitta" width={138} height={40} className="h-8 w-auto object-contain" priority />
+            <StatusPill tone="dark">OPS COMMAND</StatusPill>
+          </div>
+          <div className="flex items-center gap-2">
+            {activePanicCount ? (
+              <span className="inline-flex animate-pulse items-center gap-2 rounded-full bg-red-600 px-3 py-2 text-xs font-black text-white">
+                <BellRing size={14} /> {activePanicCount} Active Panic
+              </span>
+            ) : null}
+            <div className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-black text-white" style={{ background: 'var(--africa-green)' }}>
+              O
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Stats */}
-      <div className="border-b px-5 py-4" style={{ borderColor: 'var(--sage-border)', background: 'rgba(255,249,242,0.7)' }}>
-        <div className="flex gap-4 overflow-x-auto">
-          {MOCK_STATS.map((s, i) => (
-            <div key={i} className="flex-shrink-0 text-center">
-              <div className="text-2xl font-extrabold" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-xs trz-muted whitespace-nowrap">{s.label}</div>
-            </div>
+      <main className="mx-auto max-w-7xl px-4 py-5">
+        <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          {opsStats.map((stat) => (
+            <PremiumCard key={stat.label} className="p-4">
+              <div className="text-2xl font-black" style={{ color: stat.accent }}>{stat.value}</div>
+              <div className="mt-1 text-xs font-bold trz-ink">{stat.label}</div>
+              <div className="mt-1 text-[11px] trz-muted">{stat.delta}</div>
+            </PremiumCard>
           ))}
         </div>
-      </div>
 
-      {/* Tab bar */}
-      <div className="border-b px-4 overflow-x-auto flex gap-1 py-2" style={{ borderColor: 'var(--sage-border)', background: 'var(--warm-white)' }}>
-        {tabs.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all relative flex-shrink-0"
-            style={{
-              background: tab === t.id ? 'var(--orange-blush)' : 'transparent',
-              color: tab === t.id ? 'var(--orange-deep)' : 'var(--text-muted)',
-            }}>
-            {t.icon} {t.label}
-            {t.badge && <span className="ml-1 w-4 h-4 rounded-full text-white text-xs flex items-center justify-center" style={{ background: '#DC2626', fontSize: 10 }}>{t.badge}</span>}
-          </button>
-        ))}
-      </div>
+        <div className="mb-5 flex gap-2 overflow-x-auto rounded-[18px] border bg-white/60 p-2" style={{ borderColor: 'var(--sage-border)' }}>
+          {opsTabs.map((item) => {
+            const Icon = item.icon
+            const active = tab === item.id
+            return (
+              <button
+                key={item.id}
+                onClick={() => setTab(item.id)}
+                className="relative inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-black transition"
+                style={{ background: active ? 'var(--orange-blush)' : 'transparent', color: active ? 'var(--orange-deep)' : 'var(--text-muted)' }}
+              >
+                <Icon size={15} /> {item.label}
+                {item.badge ? <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{item.badge}</span> : null}
+              </button>
+            )
+          })}
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 p-5">
-        {tab === 'live' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">Live Map — All Active Trips</h2>
-            <div className="trz-map-bg rounded-2xl flex items-center justify-center" style={{ height: 420 }}>
-              <div className="text-center">
-                <div className="text-4xl mb-3">🗺️</div>
-                <p className="text-sm font-semibold trz-ink">Google Maps Integration</p>
-                <p className="text-xs trz-muted mt-1">All active drivers shown in real time via PostGIS · GOOGLE_MAPS_API_KEY required</p>
-                <div className="flex flex-wrap gap-2 justify-center mt-4">
-                  {[['🟢', '47 Online'], ['🔵', '23 On Trip'], ['🔴', '2 Panic Active'], ['⚫', '8 Offline']].map(([dot, label]) => (
-                    <span key={label} className="text-xs font-semibold px-2.5 py-1 rounded-full trz-card">{dot} {label}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {tab === 'panic' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-extrabold trz-ink">Panic Alerts</h2>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full text-white" style={{ background: '#DC2626' }}>🔴 {MOCK_PANIC.filter(p => p.status === 'active').length} Active</span>
-            </div>
-            <div className="space-y-3">
-              {MOCK_PANIC.map(p => (
-                <div key={p.id} className="trz-card rounded-2xl p-5 border-l-4" style={{ borderLeftColor: p.status === 'active' ? '#DC2626' : '#D96B1F' }}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="font-extrabold trz-ink">{p.user}</div>
-                      <div className="text-xs trz-muted mt-0.5">{p.vertical} · {p.location} · {p.time}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${p.status === 'active' ? 'text-white' : 'trz-blush-pill'}`}
-                        style={{ background: p.status === 'active' ? '#DC2626' : undefined }}>
-                        {p.status}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold text-white" style={{ background: '#DC2626' }}>📞 Call User</button>
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold text-white" style={{ background: '#7C3AED' }}>📹 Camera Feed</button>
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold trz-sage-pill">🚔 Police</button>
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold" style={{ background: 'var(--sage-light)', color: 'var(--africa-green)' }}>✓ Resolve</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {tab === 'drivers' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">Driver Approval Queue</h2>
-            <div className="space-y-3">
-              {MOCK_DRIVERS.map(d => (
-                <div key={d.id} className="trz-card rounded-2xl p-5 flex items-center justify-between gap-4">
-                  <div>
-                    <div className="font-extrabold trz-ink">{d.name}</div>
-                    <div className="text-xs trz-muted mt-0.5">Verticals: {d.vertical} · {d.submitted}</div>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${d.status === 'pending' ? 'trz-blush-pill' : 'text-white'}`}
-                      style={{ background: d.status === 'approved' ? '#1F6B46' : undefined }}>
-                      {d.status}
-                    </span>
-                    {d.status === 'pending' && (
-                      <>
-                        <button className="px-3 py-1.5 rounded-xl text-xs font-bold text-white" style={{ background: '#1F6B46' }}>✓ Approve</button>
-                        <button className="px-3 py-1.5 rounded-xl text-xs font-bold trz-blush-pill">✕ Reject</button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {tab === 'school' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">School Enquiry Queue</h2>
-            <div className="space-y-3">
-              {MOCK_SCHOOL.map(s => (
-                <div key={s.id} className="trz-card rounded-2xl p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="font-extrabold trz-ink">{s.child}</div>
-                      <div className="text-xs trz-muted mt-0.5">Parent: {s.parent} · School: {s.school} · {s.submitted}</div>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 rounded-full font-bold trz-blush-pill">{s.status}</span>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold text-white" style={{ background: '#1F6B46' }}>Assign Driver & Quote</button>
-                    <button className="px-4 py-2 rounded-xl text-xs font-bold trz-sage-pill">View Details</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {tab === 'compliance' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">Lagos State Compliance Reports</h2>
-            <div className="trz-card rounded-2xl p-6 mb-4">
-              <div className="flex items-center justify-between mb-4">
+        {tab === 'live' ? (
+          <div className="grid gap-5 lg:grid-cols-[1.5fr_0.8fr]">
+            <PremiumCard className="relative min-h-[520px] overflow-hidden p-5 trz-map-bg">
+              <div className="absolute inset-0 opacity-70" style={{
+                background: 'linear-gradient(90deg, rgba(31,107,70,0.08) 1px, transparent 1px 70px), linear-gradient(0deg, rgba(31,107,70,0.08) 1px, transparent 1px 70px)',
+              }} />
+              <div className="relative z-10 flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-xs font-semibold trz-muted">Today&apos;s Report</div>
-                  <div className="text-lg font-extrabold trz-ink mt-1">02 Sep 2026</div>
+                  <h1 className="text-2xl font-black trz-ink">Lagos Live Operations Map</h1>
+                  <p className="mt-1 text-sm trz-muted">Drivers, trips, panic zones, airport pickups and surge overlays.</p>
                 </div>
-                <span className="text-xs px-3 py-1.5 rounded-full font-bold text-white" style={{ background: '#DC2626' }}>Pending Submission</span>
+                <StatusPill tone="green">Realtime ready</StatusPill>
               </div>
-              <div className="grid grid-cols-3 gap-4 mb-5">
-                {[['142', 'Total Trips'], ['47', 'Active Drivers'], ['Lagos', 'City']].map(([v, l]) => (
-                  <div key={l} className="trz-sage-card rounded-xl p-3 text-center">
-                    <div className="text-xl font-extrabold trz-ink">{v}</div>
-                    <div className="text-xs trz-muted">{l}</div>
+              {liveDrivers.map((driver) => (
+                <div
+                  key={driver.name}
+                  className="absolute z-20 rounded-2xl border bg-white px-3 py-2 shadow-lg"
+                  style={{ left: `${driver.x}%`, top: `${driver.y}%`, borderColor: 'var(--sage-border)', transform: 'translate(-50%, -50%)' }}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: driver.status === 'online' ? '#1F6B46' : '#D96B1F' }} />
+                    <span className="text-xs font-black trz-ink">{driver.vertical}</span>
+                  </div>
+                  <div className="mt-1 text-[11px] trz-muted">{driver.area} - {driver.eta}</div>
+                </div>
+              ))}
+              <div className="absolute bottom-5 left-5 right-5 z-10 grid gap-2 sm:grid-cols-4">
+                {['47 online', '23 active trips', '6 airport transfers', '3 surge zones'].map((label) => (
+                  <div key={label} className="rounded-xl bg-white/82 px-3 py-2 text-center text-xs font-black trz-ink backdrop-blur">
+                    {label}
                   </div>
                 ))}
               </div>
-              <button className="px-6 py-3 rounded-xl font-bold text-white text-sm" style={{ background: 'var(--africa-green)' }}>
-                Submit to Lagos State API →
-              </button>
-            </div>
-          </motion.div>
-        )}
+            </PremiumCard>
 
-        {tab === 'surge' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">Surge Zone Manager</h2>
-            <div className="trz-map-bg rounded-2xl flex items-center justify-center mb-4" style={{ height: 340 }}>
-              <div className="text-center">
-                <div className="text-4xl mb-3">⚡</div>
-                <p className="text-sm font-semibold trz-ink">Draw Surge Zones on Map</p>
-                <p className="text-xs trz-muted mt-1">Google Maps + PostGIS polygon storage · Set multiplier + duration</p>
+            <div className="grid gap-4">
+              <PremiumCard className="p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="font-black trz-ink">Panic Watch</h2>
+                  <StatusPill tone="red">{activePanicCount} active</StatusPill>
+                </div>
+                {panicAlerts.map((alert) => (
+                  <div key={alert.user} className="mb-3 rounded-2xl border p-4 last:mb-0" style={{ borderColor: alert.status === 'active' ? '#FCA5A5' : 'var(--sage-border)', background: alert.status === 'active' ? '#FFF5F5' : '#FFFFFF' }}>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="font-black trz-ink">{alert.user}</div>
+                        <div className="text-xs trz-muted">{alert.vertical} - {alert.location} - {alert.age}</div>
+                      </div>
+                      <AlertTriangle size={18} color={alert.status === 'active' ? '#DC2626' : '#D96B1F'} />
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-black text-white"><PhoneCall size={13} /> Call</button>
+                      <button className="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-black trz-sage-pill"><Camera size={13} /> Camera</button>
+                    </div>
+                  </div>
+                ))}
+              </PremiumCard>
+
+              <PremiumCard className="p-5">
+                <h2 className="font-black trz-ink">Safety SLA</h2>
+                <div className="mt-4 space-y-3">
+                  {[
+                    ['Panic call response', 'under 60 sec', '#DC2626'],
+                    ['GPS snapshots', 'every 10 sec', '#1F6B46'],
+                    ['Driver activation', 'ops sign-off only', '#D96B1F'],
+                  ].map(([label, value, color]) => (
+                    <div key={label} className="flex items-center justify-between gap-4">
+                      <span className="text-sm trz-muted">{label}</span>
+                      <span className="text-sm font-black" style={{ color }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </PremiumCard>
+            </div>
+          </div>
+        ) : null}
+
+        {tab === 'panic' ? (
+          <motion.div className="grid gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {panicAlerts.map((alert) => (
+              <PremiumCard key={alert.user} className="border-l-4 p-5" style={{ borderLeftColor: alert.status === 'active' ? '#DC2626' : '#D96B1F' }}>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-black trz-ink">{alert.user}</h2>
+                    <p className="mt-1 text-sm trz-muted">{alert.vertical} - {alert.location} - Driver: {alert.driver} - {alert.age}</p>
+                  </div>
+                  <StatusPill tone={alert.status === 'active' ? 'red' : 'orange'}>{alert.status}</StatusPill>
+                </div>
+                <div className="mt-5 grid gap-2 sm:grid-cols-5">
+                  {['Call User', 'Open Camera', 'SMS Contacts', 'Notify Police', 'Resolve'].map((action, index) => (
+                    <button key={action} className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-black text-white" style={{ background: index === 0 ? '#DC2626' : index === 4 ? '#1F6B46' : 'var(--text-main)' }}>
+                      {index === 4 ? <CheckCircle2 size={14} /> : <SirenIcon index={index} />} {action}
+                    </button>
+                  ))}
+                </div>
+              </PremiumCard>
+            ))}
+          </motion.div>
+        ) : null}
+
+        {(['drivers', 'school', 'corporate', 'events', 'airport'] as const).includes(tab as any) ? <QueuePanel type={tab as keyof typeof queueItems} /> : null}
+
+        {tab === 'compliance' ? (
+          <PremiumCard className="p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-black trz-ink">Lagos State Compliance Report</h2>
+                <p className="mt-1 text-sm trz-muted">Aggregated daily trip payload, no rider PII, retryable submission log.</p>
               </div>
+              <StatusPill tone="orange">Pending today</StatusPill>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Zone Name" />
-              <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Multiplier (e.g. 1.5)" type="number" step="0.1" />
-              <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Reason (e.g. rain)" />
-              <button className="sm:col-span-3 px-6 py-3 rounded-xl font-bold text-white text-sm" style={{ background: 'var(--orange-deep)' }}>
-                Activate Surge Zone →
-              </button>
+            <div className="mt-6 grid gap-4 sm:grid-cols-4">
+              {[
+                ['Total trips', '142'],
+                ['Active drivers', '47'],
+                ['Cities', 'Lagos'],
+                ['PII included', 'No'],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl p-4 text-center trz-sage-card">
+                  <div className="text-2xl font-black trz-ink">{value}</div>
+                  <div className="text-xs trz-muted">{label}</div>
+                </div>
+              ))}
             </div>
-          </motion.div>
-        )}
+            <button className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black text-white" style={{ background: 'var(--africa-green)' }}>
+              <FileCheck2 size={16} /> Submit Daily Report
+            </button>
+          </PremiumCard>
+        ) : null}
 
-        {(tab === 'corporate' || tab === 'events') && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">{tab === 'corporate' ? 'Corporate' : 'Events'} Enquiry Queue</h2>
-            <div className="trz-card rounded-2xl p-8 text-center">
-              <div className="text-4xl mb-3">{tab === 'corporate' ? '🏢' : '🎉'}</div>
-              <p className="text-sm font-semibold trz-ink">No pending enquiries</p>
-              <p className="text-xs trz-muted mt-1">New {tab} enquiries from the web form will appear here</p>
+        {tab === 'surge' ? (
+          <div className="grid gap-5 lg:grid-cols-[1fr_0.8fr]">
+            <PremiumCard className="min-h-[390px] p-5 trz-map-bg">
+              <h2 className="text-xl font-black trz-ink">Surge Zone Drawing Surface</h2>
+              <p className="mt-1 text-sm trz-muted">PostGIS polygon storage for rain, traffic, airport pressure and event demand.</p>
+              <div className="mt-8 grid gap-3">
+                {['Lekki rain corridor - 1.6x', 'MMIA arrivals pressure - 1.3x', 'Eko Hotel event close - 1.8x'].map((zone) => (
+                  <div key={zone} className="rounded-2xl bg-white/80 p-4 text-sm font-black trz-ink">{zone}</div>
+                ))}
+              </div>
+            </PremiumCard>
+            <PremiumCard className="p-5">
+              <h3 className="font-black trz-ink">Activate Surge</h3>
+              <div className="mt-4 grid gap-3">
+                <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Zone name" />
+                <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Multiplier e.g. 1.5" />
+                <input className="trz-input rounded-xl px-4 py-3 text-sm outline-none" placeholder="Reason" />
+                <button className="rounded-xl px-4 py-3 text-sm font-black text-white" style={{ background: 'var(--orange-deep)' }}>Activate Zone</button>
+              </div>
+            </PremiumCard>
+          </div>
+        ) : null}
+
+        {tab === 'support' ? (
+          <PremiumCard className="p-6">
+            <h2 className="text-2xl font-black trz-ink">Call Centre Interface</h2>
+            <p className="mt-1 text-sm trz-muted">Ticket log, live chat handoff, panic callbacks and customer support across all verticals.</p>
+            <div className="mt-6 grid gap-3">
+              {['Parent asking for school ETA', 'Airport rider flight delayed', 'Driver document upload failed', 'Corporate admin invoice question'].map((ticket, index) => (
+                <div key={ticket} className="flex items-center justify-between rounded-2xl border bg-white p-4" style={{ borderColor: 'var(--sage-border)' }}>
+                  <div className="flex items-center gap-3">
+                    <Clock3 size={18} color={index === 0 ? '#DC2626' : '#65785F'} />
+                    <span className="text-sm font-black trz-ink">{ticket}</span>
+                  </div>
+                  <StatusPill tone={index === 0 ? 'red' : 'orange'}>{index === 0 ? 'urgent' : 'open'}</StatusPill>
+                </div>
+              ))}
             </div>
-          </motion.div>
-        )}
-      </div>
+          </PremiumCard>
+        ) : null}
+      </main>
     </div>
   )
+}
+
+function SirenIcon({ index }: { index: number }) {
+  if (index === 1) return <Camera size={14} />
+  if (index === 2) return <PhoneCall size={14} />
+  if (index === 3) return <ShieldCheck size={14} />
+  return <AlertTriangle size={14} />
 }

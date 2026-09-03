@@ -103,43 +103,49 @@ export default function Hero() {
           <text x="1340" y="94" textAnchor="middle" fill="#6F875B" fontSize="7" fontWeight="900" letterSpacing="2" fontFamily="'Plus Jakarta Sans',sans-serif">JOS</text>
         </svg>
 
-        {/* Animated bus */}
-        <div className="absolute bus-drive" style={{ bottom: 16, left: 0 }}>
-          <svg width="110" height="36" viewBox="0 0 110 36">
-            <rect x="3" y="3" width="97" height="26" fill="#F28A3D" rx="6" />
-            <rect x="3" y="3" width="97" height="9" fill="#D96B1F" rx="6" />
-            <rect x="8" y="7" width="18" height="12" fill="rgba(255,255,255,0.35)" rx="2" />
-            <rect x="30" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="48" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="66" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="1" y="23" width="105" height="4" fill="#C45C1B" rx="2" />
-            <circle cx="20" cy="31" r="5" fill="#183024" />
-            <circle cx="20" cy="31" r="2" fill="#7EA06D" />
-            <circle cx="82" cy="31" r="5" fill="#183024" />
-            <circle cx="82" cy="31" r="2" fill="#7EA06D" />
-            <text x="5" y="21" fill="white" fontSize="5" fontWeight="800">TRANZITTA</text>
-          </svg>
-        </div>
+        {/* Animated Tranzitta convoy */}
+        <div className="absolute fleet-convoy" style={{ bottom: 16, left: 0 }}>
+          <svg width="314" height="48" viewBox="0 0 314 48" aria-hidden="true">
+            <g transform="translate(0 7)">
+              <rect x="4" y="7" width="50" height="25" fill="#FF5A12" rx="9" />
+              <path d="M14 19c3.3-7.5 9.4-11 18.2-11 7.8 0 13.4 3.6 16.9 11v8H14v-8Z" fill="#FFFFFF" />
+              <path d="M20 18c2.1-4 5.9-6.1 11.4-6.1 5.7 0 9.5 2 11.4 6.1H20Z" fill="#18241D" />
+              <rect x="7" y="19" width="8" height="4" fill="#FFFFFF" rx="2" />
+              <rect x="48" y="19" width="8" height="4" fill="#FFFFFF" rx="2" />
+              <circle cx="18" cy="33" r="6" fill="#101714" />
+              <circle cx="18" cy="33" r="2.5" fill="#FFFFFF" />
+              <circle cx="45" cy="33" r="6" fill="#101714" />
+              <circle cx="45" cy="33" r="2.5" fill="#FFFFFF" />
+            </g>
 
-        {/* Animated car */}
-        <div className="absolute car-drive" style={{ bottom: 18, left: 0, animationDuration: '11s', animationDelay: '4s' }}>
-          <svg width="60" height="28" viewBox="0 0 60 28">
-            <rect x="4" y="10" width="52" height="14" fill="#183024" rx="4" />
-            <rect x="10" y="4" width="34" height="12" fill="#213A2B" rx="4" />
-            <rect x="13" y="6" width="14" height="8" fill="rgba(255,255,255,0.3)" rx="2" />
-            <rect x="30" y="6" width="10" height="8" fill="rgba(255,255,255,0.2)" rx="2" />
-            <circle cx="14" cy="24" r="4" fill="#333" />
-            <circle cx="46" cy="24" r="4" fill="#333" />
-            <rect x="0" y="13" width="6" height="4" fill="#F5D840" rx="1" />
-            <rect x="54" y="13" width="6" height="4" fill="#D96B1F" rx="1" />
-          </svg>
-        </div>
+            <g transform="translate(84 6)">
+              <rect x="3" y="3" width="108" height="28" fill="#F28A3D" rx="7" />
+              <rect x="3" y="3" width="108" height="10" fill="#D96B1F" rx="7" />
+              <rect x="10" y="8" width="18" height="12" fill="rgba(255,255,255,0.38)" rx="2" />
+              <rect x="32" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="51" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="70" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="1" y="25" width="116" height="4" fill="#C45C1B" rx="2" />
+              <circle cx="22" cy="33" r="6" fill="#183024" />
+              <circle cx="22" cy="33" r="2.5" fill="#7EA06D" />
+              <circle cx="90" cy="33" r="6" fill="#183024" />
+              <circle cx="90" cy="33" r="2.5" fill="#7EA06D" />
+              <text x="10" y="23" fill="white" fontSize="6" fontWeight="900">TRANZITTA BUS</text>
+            </g>
 
-        {/* Animated airplane */}
-        <div className="absolute plane-fly" style={{ top: 30, left: 0 }}>
-          <svg width="50" height="24" viewBox="0 0 50 24">
-            <path d="M45 12 L10 4 L8 8 L20 12 L8 16 L10 20 L45 12Z" fill="#D96B1F" opacity="0.7" />
-            <rect x="16" y="10" width="16" height="4" fill="#F28A3D" rx="1" opacity="0.5" />
+            <g transform="translate(232 8)">
+              <rect x="8" y="11" width="64" height="16" fill="#17271E" rx="5" />
+              <path d="M20 11h35l9 8H12l8-8Z" fill="#213A2B" />
+              <rect x="23" y="13" width="14" height="8" fill="rgba(255,255,255,0.34)" rx="2" />
+              <rect x="41" y="13" width="13" height="8" fill="rgba(255,255,255,0.23)" rx="2" />
+              <rect x="4" y="18" width="8" height="4" fill="#F5D840" rx="1" />
+              <rect x="69" y="18" width="8" height="4" fill="#D96B1F" rx="1" />
+              <circle cx="22" cy="28" r="5" fill="#101714" />
+              <circle cx="22" cy="28" r="2" fill="#F8C84E" />
+              <circle cx="60" cy="28" r="5" fill="#101714" />
+              <circle cx="60" cy="28" r="2" fill="#F8C84E" />
+              <text x="26" y="26" fill="#FFE2B8" fontSize="5" fontWeight="900">VIP</text>
+            </g>
           </svg>
         </div>
       </div>
@@ -203,13 +209,6 @@ export default function Hero() {
           ))}
         </motion.div>
       </div>
-
-      <motion.div className="absolute left-1/2 -translate-x-1/2 scroll-arrow" style={{ bottom: 56 }}
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}>
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-          <path d="M12 5v14M5 12l7 7 7-7" stroke="#7EA06D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </motion.div>
     </section>
   )
 }

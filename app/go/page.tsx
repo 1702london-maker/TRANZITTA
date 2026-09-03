@@ -6,11 +6,14 @@ import Navbar from '@/components/Navbar'
 import StickyBar from '@/components/StickyBar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import LocationInput from '@/components/go/LocationInput'
+import RoutePreviewMap from '@/components/go/RoutePreviewMap'
 
 export default function GoPage() {
   const [pickup, setPickup] = useState('')
   const [dropoff, setDropoff] = useState('')
   const [listening, setListening] = useState(false)
+  const bookingHref = `/go/book?pickup=${encodeURIComponent(pickup)}&dropoff=${encodeURIComponent(dropoff)}`
 
   return (
     <>
@@ -35,7 +38,7 @@ export default function GoPage() {
               Book in seconds. Track live. Panic button always on. Police-vetted drivers across Lagos — Abuja and Port Harcourt coming soon.
             </motion.p>
             <motion.div className="flex flex-wrap gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-              <Link href="/go/book" className="px-7 py-3.5 rounded-full font-bold text-white text-sm hover:scale-105 transition-transform"
+              <Link href={bookingHref} className="px-7 py-3.5 rounded-full font-bold text-white text-sm hover:scale-105 transition-transform"
                 style={{ background: 'var(--orange-deep)', boxShadow: '0 4px 18px rgba(217,107,31,0.3)' }}>
                 Book Now →
               </Link>
@@ -47,22 +50,12 @@ export default function GoPage() {
           </div>
 
           {/* Booking widget */}
-          <motion.div className="w-full max-w-sm gradient-frame rounded-2xl p-6"
+          <motion.div className="w-full max-w-md gradient-frame rounded-2xl p-6"
             initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
             <h2 className="font-extrabold trz-ink mb-5 text-lg">Where to?</h2>
             <div className="space-y-3 mb-5">
-              <div className="relative">
-                <div className="w-3 h-3 rounded-full absolute left-3.5 top-1/2 -translate-y-1/2" style={{ background: 'var(--africa-green)' }} />
-                <input value={pickup} onChange={e => setPickup(e.target.value)}
-                  className="w-full trz-input rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-orange-300"
-                  placeholder="Pickup location" />
-              </div>
-              <div className="relative">
-                <div className="w-3 h-3 rounded-full absolute left-3.5 top-1/2 -translate-y-1/2" style={{ background: 'var(--orange-deep)' }} />
-                <input value={dropoff} onChange={e => setDropoff(e.target.value)}
-                  className="w-full trz-input rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-orange-300"
-                  placeholder="Where are you going?" />
-              </div>
+              <LocationInput value={pickup} onChange={setPickup} placeholder="Pickup location" tone="pickup" />
+              <LocationInput value={dropoff} onChange={setDropoff} placeholder="Where are you going?" tone="dropoff" />
             </div>
             <div className="flex gap-2 mb-5">
               <button onClick={() => setListening(!listening)}
@@ -78,14 +71,21 @@ export default function GoPage() {
                 <span className="text-xs px-2 py-0.5 rounded-full trz-blush-pill font-bold">No surge</span>
               </div>
               <div className="text-2xl font-extrabold trz-ink">₦2,400 – ₦3,100</div>
-              <div className="text-xs trz-muted mt-1">~12 min ETA · 3 drivers nearby</div>
+              <div className="text-xs trz-muted mt-1">Fare preview only · sign up to view matched drivers</div>
             </div>
-            <Link href="/go/login"
+            <Link href={bookingHref}
               className="block w-full py-3.5 rounded-xl font-bold text-white text-sm text-center hover:scale-105 transition-transform"
               style={{ background: 'var(--orange-deep)' }}>
-              Sign In to Book
+              Continue to Driver Matching
             </Link>
+            <p className="mt-3 text-center text-xs trz-muted">Matching drivers are shown after registration.</p>
           </motion.div>
+        </section>
+
+        <section className="px-4 pb-16" style={{ background: 'var(--warm-white)' }}>
+          <div className="mx-auto max-w-6xl">
+            <RoutePreviewMap pickup={pickup} dropoff={dropoff} />
+          </div>
         </section>
 
         {/* Features */}
