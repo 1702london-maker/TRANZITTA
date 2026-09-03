@@ -28,7 +28,7 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-6">
           <Link href="/how-it-works" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>How It Works</Link>
-          <Link href="#safety" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Safety</Link>
+          <Link href="/safety" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Safety</Link>
           <Link href="/driver" className="nav-link text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Drive With Us</Link>
         </div>
 
@@ -64,7 +64,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="lg:hidden border-t px-4 py-4 space-y-2 trz-mobile-menu" style={{ borderColor: 'var(--sage-border)' }}>
           <Link href="/how-it-works" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>How It Works</Link>
-          <Link href="#safety" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Safety</Link>
+          <Link href="/safety" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Safety</Link>
           <button className="flex w-full items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }}><Globe2 size={16} /> Language: EN</button>
           <Link href="#contact" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Contact Us</Link>
           <Link href="/go/login" className="block py-2.5 px-3 rounded-xl text-sm font-semibold hover:bg-orange-50 transition-colors" style={{ color: 'var(--text-main)' }} onClick={() => setMobileOpen(false)}>Login</Link>
