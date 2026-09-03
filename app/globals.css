@@ -170,22 +170,13 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: translateX(calc(100% + 140px)); }
 }
 
-.fleet-drive {
-  animation: fleetDrive 16s linear infinite;
+.fleet-convoy {
+  animation: fleetDrive 15s linear infinite;
   filter: drop-shadow(0 8px 12px rgba(24,48,36,0.18));
 }
-.fleet-logo-car { animation-duration: 13s; animation-delay: 0s; }
-.fleet-bus { animation-duration: 17s; animation-delay: 2.4s; }
-.fleet-jeep { animation-duration: 15s; animation-delay: 5.2s; }
 @keyframes fleetDrive {
-  0% { transform: translateX(-180px); }
-  100% { transform: translateX(calc(100vw + 220px)); }
-}
-
-.plane-fly { animation: planeFly 18s linear infinite; }
-@keyframes planeFly {
-  0% { transform: translateX(-160px) translateY(10px); }
-  100% { transform: translateX(calc(100vw + 160px)) translateY(-20px); }
+  0% { transform: translateX(-340px); }
+  100% { transform: translateX(calc(100vw + 240px)); }
 }
 
 .dot-particle {
@@ -195,12 +186,6 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes dotFloat {
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
   50% { transform: translateY(-18px) scale(1.3); opacity: 0.45; }
-}
-
-.scroll-arrow { animation: bounce 2s ease-in-out infinite; }
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
 }
 
 .wapp-pulse { animation: wappPulse 4s ease-in-out infinite; }

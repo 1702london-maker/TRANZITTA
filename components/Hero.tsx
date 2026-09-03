@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
@@ -104,51 +103,49 @@ export default function Hero() {
           <text x="1340" y="94" textAnchor="middle" fill="#6F875B" fontSize="7" fontWeight="900" letterSpacing="2" fontFamily="'Plus Jakarta Sans',sans-serif">JOS</text>
         </svg>
 
-        {/* Animated Tranzitta fleet */}
-        <div className="absolute fleet-drive fleet-logo-car" style={{ bottom: 15, left: 0 }}>
-          <div className="relative h-12 w-12 rounded-[14px] shadow-lg">
-            <Image src="/tranzitta-logo.png" alt="" fill sizes="48px" className="object-contain" />
-          </div>
-        </div>
+        {/* Animated Tranzitta convoy */}
+        <div className="absolute fleet-convoy" style={{ bottom: 16, left: 0 }}>
+          <svg width="314" height="48" viewBox="0 0 314 48" aria-hidden="true">
+            <g transform="translate(0 7)">
+              <rect x="4" y="7" width="50" height="25" fill="#FF5A12" rx="9" />
+              <path d="M14 19c3.3-7.5 9.4-11 18.2-11 7.8 0 13.4 3.6 16.9 11v8H14v-8Z" fill="#FFFFFF" />
+              <path d="M20 18c2.1-4 5.9-6.1 11.4-6.1 5.7 0 9.5 2 11.4 6.1H20Z" fill="#18241D" />
+              <rect x="7" y="19" width="8" height="4" fill="#FFFFFF" rx="2" />
+              <rect x="48" y="19" width="8" height="4" fill="#FFFFFF" rx="2" />
+              <circle cx="18" cy="33" r="6" fill="#101714" />
+              <circle cx="18" cy="33" r="2.5" fill="#FFFFFF" />
+              <circle cx="45" cy="33" r="6" fill="#101714" />
+              <circle cx="45" cy="33" r="2.5" fill="#FFFFFF" />
+            </g>
 
-        <div className="absolute fleet-drive fleet-bus" style={{ bottom: 16, left: 0 }}>
-          <svg width="118" height="40" viewBox="0 0 118 40">
-            <rect x="3" y="3" width="97" height="26" fill="#F28A3D" rx="6" />
-            <rect x="3" y="3" width="97" height="9" fill="#D96B1F" rx="6" />
-            <rect x="8" y="7" width="18" height="12" fill="rgba(255,255,255,0.35)" rx="2" />
-            <rect x="30" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="48" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="66" y="7" width="14" height="12" fill="rgba(255,255,255,0.25)" rx="2" />
-            <rect x="1" y="23" width="105" height="4" fill="#C45C1B" rx="2" />
-            <circle cx="20" cy="31" r="5" fill="#183024" />
-            <circle cx="20" cy="31" r="2" fill="#7EA06D" />
-            <circle cx="82" cy="31" r="5" fill="#183024" />
-            <circle cx="82" cy="31" r="2" fill="#7EA06D" />
-            <text x="5" y="21" fill="white" fontSize="5" fontWeight="800">TRANZITTA BUS</text>
-          </svg>
-        </div>
+            <g transform="translate(84 6)">
+              <rect x="3" y="3" width="108" height="28" fill="#F28A3D" rx="7" />
+              <rect x="3" y="3" width="108" height="10" fill="#D96B1F" rx="7" />
+              <rect x="10" y="8" width="18" height="12" fill="rgba(255,255,255,0.38)" rx="2" />
+              <rect x="32" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="51" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="70" y="8" width="15" height="12" fill="rgba(255,255,255,0.27)" rx="2" />
+              <rect x="1" y="25" width="116" height="4" fill="#C45C1B" rx="2" />
+              <circle cx="22" cy="33" r="6" fill="#183024" />
+              <circle cx="22" cy="33" r="2.5" fill="#7EA06D" />
+              <circle cx="90" cy="33" r="6" fill="#183024" />
+              <circle cx="90" cy="33" r="2.5" fill="#7EA06D" />
+              <text x="10" y="23" fill="white" fontSize="6" fontWeight="900">TRANZITTA BUS</text>
+            </g>
 
-        <div className="absolute fleet-drive fleet-jeep" style={{ bottom: 17, left: 0 }}>
-          <svg width="82" height="34" viewBox="0 0 82 34">
-            <rect x="8" y="11" width="64" height="16" fill="#17271E" rx="5" />
-            <path d="M20 11h35l9 8H12l8-8Z" fill="#213A2B" />
-            <rect x="23" y="13" width="14" height="8" fill="rgba(255,255,255,0.34)" rx="2" />
-            <rect x="41" y="13" width="13" height="8" fill="rgba(255,255,255,0.23)" rx="2" />
-            <rect x="4" y="18" width="8" height="4" fill="#F5D840" rx="1" />
-            <rect x="69" y="18" width="8" height="4" fill="#D96B1F" rx="1" />
-            <circle cx="22" cy="28" r="5" fill="#101714" />
-            <circle cx="22" cy="28" r="2" fill="#F8C84E" />
-            <circle cx="60" cy="28" r="5" fill="#101714" />
-            <circle cx="60" cy="28" r="2" fill="#F8C84E" />
-            <text x="26" y="26" fill="#FFE2B8" fontSize="5" fontWeight="900">VIP</text>
-          </svg>
-        </div>
-
-        {/* Animated airplane */}
-        <div className="absolute plane-fly" style={{ top: 30, left: 0 }}>
-          <svg width="50" height="24" viewBox="0 0 50 24">
-            <path d="M45 12 L10 4 L8 8 L20 12 L8 16 L10 20 L45 12Z" fill="#D96B1F" opacity="0.7" />
-            <rect x="16" y="10" width="16" height="4" fill="#F28A3D" rx="1" opacity="0.5" />
+            <g transform="translate(232 8)">
+              <rect x="8" y="11" width="64" height="16" fill="#17271E" rx="5" />
+              <path d="M20 11h35l9 8H12l8-8Z" fill="#213A2B" />
+              <rect x="23" y="13" width="14" height="8" fill="rgba(255,255,255,0.34)" rx="2" />
+              <rect x="41" y="13" width="13" height="8" fill="rgba(255,255,255,0.23)" rx="2" />
+              <rect x="4" y="18" width="8" height="4" fill="#F5D840" rx="1" />
+              <rect x="69" y="18" width="8" height="4" fill="#D96B1F" rx="1" />
+              <circle cx="22" cy="28" r="5" fill="#101714" />
+              <circle cx="22" cy="28" r="2" fill="#F8C84E" />
+              <circle cx="60" cy="28" r="5" fill="#101714" />
+              <circle cx="60" cy="28" r="2" fill="#F8C84E" />
+              <text x="26" y="26" fill="#FFE2B8" fontSize="5" fontWeight="900">VIP</text>
+            </g>
           </svg>
         </div>
       </div>
