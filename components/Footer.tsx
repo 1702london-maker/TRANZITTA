@@ -8,8 +8,8 @@ const LINKS = [
   {
     group: 'Platform',
     items: [
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Safety', href: '#safety' },
+      { label: 'How It Works', href: '/how-it-works' },
+      { label: 'Safety', href: '/safety' },
       { label: 'Drive With Us', href: '/driver' },
       { label: 'Contact', href: '#contact' },
     ],
@@ -29,7 +29,7 @@ const LINKS = [
     items: [
       { label: 'Driver App', href: '/driver/dashboard' },
       { label: 'Ops Login', href: '/ops' },
-      { label: 'Panic Response', href: '#safety' },
+      { label: 'Panic Response', href: '/safety' },
       { label: 'Compliance', href: '/ops/dashboard' },
     ],
   },
