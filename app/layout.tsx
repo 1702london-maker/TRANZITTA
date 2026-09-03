@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import StickyBar from '@/components/StickyBar'
+import FloatingVerticalBar from '@/components/FloatingVerticalBar'
 
 export const metadata: Metadata = {
   title: 'Tranzitta — Nigeria\'s Safety-First Ride Platform',
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <StickyBar />
         {children}
+        <FloatingVerticalBar />
       </body>
     </html>
   )
