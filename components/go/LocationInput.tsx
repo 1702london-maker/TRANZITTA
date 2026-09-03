@@ -2,21 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { MapPin, Navigation } from 'lucide-react'
-
-const LAGOS_SUGGESTIONS = [
-  'Lekki Phase 1',
-  'Victoria Island',
-  'Ikoyi',
-  'Ikeja GRA',
-  'Murtala Muhammed International Airport',
-  'Lagos Island',
-  'Yaba',
-  'Surulere',
-  'Maryland',
-  'Ajah',
-  'Chevron Drive',
-  'Eko Hotel',
-]
+import { lagosLocations } from '@/lib/tranzitta/lagos-locations'
 
 export default function LocationInput({
   value,
@@ -32,8 +18,8 @@ export default function LocationInput({
   const [focused, setFocused] = useState(false)
   const suggestions = useMemo(() => {
     const query = value.trim().toLowerCase()
-    if (!query) return LAGOS_SUGGESTIONS.slice(0, 5)
-    return LAGOS_SUGGESTIONS.filter((item) => item.toLowerCase().includes(query)).slice(0, 5)
+    if (!query) return lagosLocations.slice(0, 6)
+    return lagosLocations.filter((item) => `${item.name} ${item.area}`.toLowerCase().includes(query)).slice(0, 6)
   }, [value])
 
   return (
@@ -57,15 +43,18 @@ export default function LocationInput({
         <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-40 overflow-hidden rounded-2xl border bg-white shadow-xl" style={{ borderColor: 'var(--sage-border)' }}>
           {suggestions.map((suggestion) => (
             <button
-              key={suggestion}
+              key={suggestion.name}
               type="button"
               onMouseDown={(event) => event.preventDefault()}
-              onClick={() => onChange(suggestion)}
+              onClick={() => onChange(suggestion.name)}
               className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold transition hover:bg-orange-50"
               style={{ color: 'var(--text-main)' }}
             >
               {tone === 'pickup' ? <Navigation size={15} color="#1F6B46" /> : <MapPin size={15} color="#D96B1F" />}
-              {suggestion}
+              <span>
+                <span className="block">{suggestion.name}</span>
+                <span className="block text-xs font-medium trz-muted">{suggestion.area}, Lagos</span>
+              </span>
             </button>
           ))}
         </div>

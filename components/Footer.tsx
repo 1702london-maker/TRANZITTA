@@ -2,35 +2,37 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Apple, Play, ShieldCheck } from 'lucide-react'
+import { Apple, Facebook, Instagram, Linkedin, Mail, MapPin, Play } from 'lucide-react'
 
 const LINKS = [
   {
     group: 'Platform',
     items: [
       { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Safety', href: '#safety' },
-      { label: 'Drive With Us', href: '/driver' },
-      { label: 'Contact', href: '#contact' },
-    ],
-  },
-  {
-    group: 'Verticals',
-    items: [
+      { label: 'Live Tracking', href: '/go/track' },
+      { label: 'Driver Safety', href: '#safety' },
       { label: 'Tranzitta Go', href: '/go' },
       { label: 'Tranzitta School', href: '/school' },
-      { label: 'Tranzitta Corporate', href: '/corporate' },
-      { label: 'Tranzitta Events', href: '/events' },
-      { label: 'Tranzitta Airport', href: '/airport' },
     ],
   },
   {
-    group: 'Operations',
+    group: 'Company',
     items: [
-      { label: 'Driver App', href: '/driver/dashboard' },
+      { label: 'About Tranzitta', href: '/' },
+      { label: 'Our Fleet', href: '#fleet' },
+      { label: 'Corporate', href: '/corporate' },
+      { label: 'Events', href: '/events' },
+      { label: 'Airport', href: '/airport' },
+    ],
+  },
+  {
+    group: 'Support',
+    items: [
+      { label: 'Book a Ride', href: '/go/book' },
+      { label: 'WhatsApp Us', href: '#contact' },
+      { label: 'Driver Signup', href: '/driver' },
       { label: 'Ops Login', href: '/ops' },
-      { label: 'Panic Response', href: '#safety' },
-      { label: 'Compliance', href: '/ops/dashboard' },
+      { label: 'Safety Policy', href: '#safety' },
     ],
   },
 ]
@@ -48,8 +50,8 @@ function StoreBadge({
   return (
     <a
       href="#"
-      className="inline-flex min-w-[172px] items-center gap-3 rounded-2xl border px-4 py-3 text-left transition hover:-translate-y-0.5 hover:bg-white"
-      style={{ borderColor: 'rgba(255,226,184,0.42)', background: 'rgba(255,255,255,0.08)', color: '#fff' }}
+      className="inline-flex min-w-[178px] items-center gap-3 rounded-2xl px-5 py-3 text-left text-white shadow-xl transition hover:-translate-y-0.5"
+      style={{ background: '#242624' }}
       aria-label={label}
     >
       <Icon size={25} />
@@ -63,39 +65,36 @@ function StoreBadge({
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden pt-16" style={{ background: 'var(--warm-white)' }}>
+    <footer className="relative overflow-hidden pt-20" style={{ background: 'var(--sage-light)' }}>
       <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'var(--sage-border)' }} />
 
       <div className="mx-auto max-w-7xl px-4">
-        <div className="grid gap-8 rounded-[28px] px-6 py-8 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
-          style={{ background: 'linear-gradient(110deg, #183024 0%, #1F6B46 54%, #C46B2B 100%)', boxShadow: '0 22px 60px rgba(24,48,36,0.2)' }}>
+        <div className="grid grid-cols-1 gap-10 py-10 sm:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr_0.85fr]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-black"
-              style={{ background: 'rgba(255,255,255,0.12)', color: '#FFE2B8' }}>
-              <ShieldCheck size={14} /> Safety-first transport in your pocket
+            <Image src="/tranzitta-logo.png" alt="Tranzitta" width={220} height={70} className="mb-6 h-14 w-auto object-contain" />
+            <p className="max-w-xs text-base leading-8 trz-muted">
+              Safe Nigerian transport across Go, School, Corporate, Events and Airport.
+            </p>
+            <div className="mt-6 flex gap-3">
+              {[
+                ['X', 'X'],
+                ['Facebook', Facebook],
+                ['Instagram', Instagram],
+                ['LinkedIn', Linkedin],
+              ].map(([label, Icon]) => (
+                <a key={String(label)} href="#" aria-label={String(label)} className="flex h-11 w-11 items-center justify-center rounded-full trz-sage-pill transition hover:-translate-y-0.5 hover:text-orange-700">
+                  {typeof Icon === 'string' ? <span className="text-lg font-black">𝕏</span> : <Icon size={18} />}
+                </a>
+              ))}
             </div>
-            <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-white sm:text-4xl">
-              Download Tranzitta for Go, School, Corporate, Events and Airport.
-            </h2>
-            <p className="mt-4 max-w-xl text-sm leading-7 trz-muted-on-dark">
-              One premium Nigerian mobility network with vetted drivers, live tracking, panic response and human ops support.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-            <StoreBadge type="apple" kicker="Download on the" label="App Store" />
-            <StoreBadge type="play" kicker="Get it on" label="Google Play" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
-          <div>
-            <Image src="/tranzitta-logo.png" alt="Tranzitta" width={190} height={58} className="mb-5 h-12 w-auto object-contain" />
-            <p className="max-w-sm text-sm leading-7 trz-muted">
-              Nigeria&apos;s safety-first ride platform. Police-vetted drivers, panic button, live GPS and premium fleet coverage across five verticals.
-            </p>
-            <a href="mailto:bookings@tranzitta.africa" className="mt-4 inline-block text-sm font-black trz-orange">
-              bookings@tranzitta.africa
-            </a>
+            <div className="mt-7 space-y-4 text-base trz-muted">
+              <a href="mailto:booking@tranzitta.africa" className="flex items-center gap-3 hover:text-orange-700">
+                <Mail size={18} /> booking@tranzitta.africa
+              </a>
+              <p className="flex max-w-xs items-start gap-3">
+                <MapPin size={18} className="mt-1 shrink-0" /> Operating in Lagos. Abuja and Port Harcourt coming soon.
+              </p>
+            </div>
           </div>
 
           {LINKS.map((group) => (
@@ -113,12 +112,20 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
+        <div className="flex justify-center gap-4 pb-20 pt-2">
+          <StoreBadge type="apple" kicker="Coming soon on the" label="App Store" />
+          <StoreBadge type="play" kicker="Coming soon on" label="Google Play" />
+        </div>
       </div>
 
-      <div className="trz-top-gradient px-4 py-5 text-white">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-xs font-bold opacity-95 sm:flex-row sm:text-left">
-          <p>© 2026 Tranzitta. Operated by Budruum Ltd. All rights reserved.</p>
-          <p>tranzitta.africa · Lagos active now · Abuja and Port Harcourt next</p>
+      <div className="border-t px-4 py-7" style={{ borderColor: 'var(--sage-border)' }}>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-sm trz-muted sm:flex-row sm:text-left">
+          <p>Copyright 2026 Tranzitta Nigeria.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="hover:text-orange-700">Terms</Link>
+            <Link href="#" className="hover:text-orange-700">Privacy</Link>
+          </div>
         </div>
       </div>
     </footer>

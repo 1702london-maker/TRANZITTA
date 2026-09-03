@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
-import StickyBar from '@/components/StickyBar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 
@@ -27,7 +26,6 @@ export default function DriverPage() {
 
   return (
     <>
-      <StickyBar />
       <Navbar />
       <main style={{ paddingTop: 54 }}>
         {/* Hero */}
