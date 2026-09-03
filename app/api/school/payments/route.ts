@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
+import { asNumber, asString, readJson, requireFields } from '@/lib/api'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,13 +22,25 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   // Initiate Paystack payment for term fee
-  const { child_id, parent_id, term_start, term_end, base_term_fee } = await req.json()
+  const parsed = await readJson<Record<string, unknown>>(req)
+  if (!parsed.ok) return parsed.response
+
+  const body = parsed.data
+  const required = requireFields(body, ['child_id', 'parent_id', 'term_start', 'term_end', 'base_term_fee'])
+  if (required) return required.response
+
   const db = supabaseAdmin()
 
   // Create payment record
   const { data, error } = await db.from('school_payments').insert({
-    child_id, parent_id, term_start, term_end,
-    base_term_fee, excess_charges: 0,
+    child_id: asString(body.child_id),
+    parent_id: asString(body.parent_id),
+    term_start: asString(body.term_start),
+    term_end: asString(body.term_end),
+    base_term_fee: asNumber(body.base_term_fee),
+    amount: asNumber(body.base_term_fee, 0),
+    month: asString(body.term_start),
+    excess_charges: 0,
     payment_status: 'pending', payment_provider: 'paystack'
   }).select().single()
 

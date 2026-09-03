@@ -1,13 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+function requiredEnv(name: string) {
+  const value = process.env[name]
+  if (!value) throw new Error(`${name} is required`)
+  return value
+}
 
 // Service-role client for API routes (bypasses RLS for ops actions)
-export const supabaseAdmin = () => createClient(url, serviceKey, {
-  auth: { autoRefreshToken: false, persistSession: false }
-})
+export const supabaseAdmin = () =>
+  createClient(requiredEnv('NEXT_PUBLIC_SUPABASE_URL'), requiredEnv('SUPABASE_SERVICE_ROLE_KEY'), {
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
 
 // Anon client for public reads
-export const supabaseAnon = () => createClient(url, anonKey)
+export const supabaseAnon = () =>
+  createClient(requiredEnv('NEXT_PUBLIC_SUPABASE_URL'), requiredEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'))

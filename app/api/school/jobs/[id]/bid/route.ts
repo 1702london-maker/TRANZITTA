@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
+import { asString, readJson, requireFields } from '@/lib/api'
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const { driver_id, message } = await req.json()
-  if (!driver_id) return NextResponse.json({ error: 'Driver ID required' }, { status: 400 })
+  const parsed = await readJson<Record<string, unknown>>(req)
+  if (!parsed.ok) return parsed.response
+
+  const body = parsed.data
+  const required = requireFields(body, ['driver_id'])
+  if (required) return required.response
+
+  const driverId = asString(body.driver_id)
 
   const db = supabaseAdmin()
 
@@ -13,11 +20,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   // Check not already bid
   const { data: existing } = await db.from('school_driver_bids')
-    .select('id').eq('job_id', params.id).eq('driver_id', driver_id).single()
+    .select('id').eq('job_id', params.id).eq('driver_id', driverId).single()
   if (existing) return NextResponse.json({ error: 'Already bid on this job' }, { status: 409 })
 
   const { data, error } = await db.from('school_driver_bids').insert({
-    job_id: params.id, driver_id, message, status: 'submitted'
+    job_id: params.id, driver_id: driverId, message: asString(body.message) || null, status: 'submitted'
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

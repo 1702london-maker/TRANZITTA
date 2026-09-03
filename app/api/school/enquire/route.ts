@@ -1,27 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
+import { asString, readJson, requireFields } from '@/lib/api'
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const {
-    parent_id, child_name, school_name, school_address,
-    pickup_address, morning_ready_time, afternoon_close_time, special_notes
-  } = body
+  const parsed = await readJson<Record<string, unknown>>(req)
+  if (!parsed.ok) return parsed.response
 
-  if (!child_name || !school_name || !school_address || !pickup_address) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-  }
+  const body = parsed.data
+  const required = requireFields(body, ['child_name', 'school_name', 'school_address', 'pickup_address'])
+  if (required) return required.response
 
   const db = supabaseAdmin()
   const { data, error } = await db.from('school_enquiries').insert({
-    parent_id,
-    child_name,
-    school_name,
-    school_address,
-    pickup_address,
-    morning_ready_time,
-    afternoon_close_time,
-    special_notes,
+    parent_id: asString(body.parent_id) || null,
+    child_name: asString(body.child_name),
+    school_name: asString(body.school_name),
+    school_address: asString(body.school_address),
+    pickup_address: asString(body.pickup_address),
+    morning_ready_time: asString(body.morning_ready_time) || null,
+    afternoon_close_time: asString(body.afternoon_close_time) || null,
+    special_notes: asString(body.special_notes) || null,
     status: 'submitted'
   }).select().single()
 
@@ -32,7 +30,7 @@ export async function POST(req: NextRequest) {
     user_id: null,
     type: 'school_enquiry',
     title: 'New School Enquiry',
-    body: `${child_name} — ${school_name} — submitted by parent`,
+    body: `${asString(body.child_name)} — ${asString(body.school_name)} — submitted by parent`,
     data: { enquiry_id: data.id }
   })
 

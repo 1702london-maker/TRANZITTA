@@ -1,0 +1,1 @@
+-- Remote baseline migration already applied in Supabase before this repo was synced.

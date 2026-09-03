@@ -1,45 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
+import { asInt, asString, readJson, requireFields, serverError } from '@/lib/api'
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const {
-    direction, terminal, flight_number, flight_date, flight_time, airline,
-    destination_zone, destination_address, pickup_address,
-    luggage_count, meet_greet, vehicle_type, passengers,
-    special_requirements, contact_name, contact_phone, contact_email,
-  } = body
+  const parsed = await readJson<Record<string, unknown>>(req)
+  if (!parsed.ok) return parsed.response
 
-  if (!direction || !terminal || !flight_number || !flight_date || !contact_name || !contact_phone) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-  }
-  if (!destination_zone || !destination_address) {
-    return NextResponse.json({ error: 'Destination zone and address required' }, { status: 400 })
-  }
+  const body = parsed.data
+  const required = requireFields(body, ['direction', 'terminal', 'flight_number', 'flight_date', 'contact_name', 'contact_phone', 'destination_zone', 'destination_address'])
+  if (required) return required.response
+
+  const direction = asString(body.direction)
+  const flightNumber = asString(body.flight_number).toUpperCase()
+  const flightDate = asString(body.flight_date)
+  const flightTime = asString(body.flight_time)
 
   const db = supabaseAdmin()
 
-  const scheduled_flight_time = flight_date && flight_time
-    ? `${flight_date}T${flight_time}:00`
+  const scheduled_flight_time = flightDate && flightTime
+    ? `${flightDate}T${flightTime}:00`
     : null
 
   const { data, error } = await db.from('airport_bookings').insert({
     direction,
-    terminal,
-    flight_number: flight_number.trim().toUpperCase(),
-    airline: airline || null,
+    terminal: asString(body.terminal),
+    flight_number: flightNumber,
+    airline: asString(body.airline) || null,
     scheduled_flight_time,
-    destination_zone,
-    destination_address,
-    pickup_address: direction === 'departure' ? (pickup_address || null) : null,
-    luggage_count: parseInt(luggage_count) || 1,
-    meet_greet_preference: meet_greet,
-    vehicle_type: vehicle_type || null,
-    passenger_count: parseInt(passengers) || 1,
-    special_requirements: special_requirements || null,
-    contact_name,
-    contact_phone,
-    contact_email: contact_email || null,
+    destination_zone: asString(body.destination_zone),
+    destination_address: asString(body.destination_address),
+    pickup_address: direction === 'departure' ? (asString(body.pickup_address) || null) : null,
+    luggage_count: asInt(body.luggage_count, 1),
+    meet_greet_preference: Boolean(body.meet_greet),
+    vehicle_type: asString(body.vehicle_type) || null,
+    passenger_count: asInt(body.passengers, 1),
+    special_requirements: asString(body.special_requirements) || null,
+    contact_name: asString(body.contact_name),
+    contact_phone: asString(body.contact_phone),
+    contact_email: asString(body.contact_email) || null,
     status: 'booked',
     payment_status: 'pending',
     flight_status: 'on_time',
@@ -47,22 +45,22 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     console.error('airport_bookings insert error:', error)
-    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 })
+    return serverError('Failed to create booking')
   }
 
   void db.from('notifications').insert({
     user_id: null,
     type: 'airport_booking',
     title: 'New Airport Transfer Booking',
-    body: `${flight_number} (${direction}) — ${contact_name} · ${contact_phone} — ${destination_zone}`,
+    body: `${flightNumber} (${direction}) — ${asString(body.contact_name)} · ${asString(body.contact_phone)} — ${asString(body.destination_zone)}`,
     data: {
       booking_id: data.id,
-      flight_number,
+      flight_number: flightNumber,
       direction,
-      terminal,
-      destination_zone,
-      contact_phone,
-      contact_email,
+      terminal: asString(body.terminal),
+      destination_zone: asString(body.destination_zone),
+      contact_phone: asString(body.contact_phone),
+      contact_email: asString(body.contact_email),
     },
   })
 

@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
+import { asInt, asNumber, asString, readJson, requireFields, serverError } from '@/lib/api'
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const {
-    tier, pickup_address, dropoff_address, estimated_fare,
-    surge_multiplier, payment_method, passengers,
-    special_requirements, contact_name, contact_phone,
-  } = body
+  const parsed = await readJson<Record<string, unknown>>(req)
+  if (!parsed.ok) return parsed.response
 
-  if (!tier || !pickup_address || !dropoff_address || !payment_method || !contact_name || !contact_phone) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-  }
+  const body = parsed.data
+  const required = requireFields(body, ['tier', 'pickup_address', 'dropoff_address', 'payment_method', 'contact_name', 'contact_phone'])
+  if (required) return required.response
+
+  const tier = asString(body.tier)
+  const paymentMethod = asString(body.payment_method)
+
   if (!['go', 'executive'].includes(tier)) {
     return NextResponse.json({ error: 'Invalid tier' }, { status: 400 })
   }
-  if (!['card_hold', 'bank_transfer'].includes(payment_method)) {
+  if (!['card_hold', 'bank_transfer'].includes(paymentMethod)) {
     return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 })
   }
 
@@ -23,17 +24,17 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await db.from('trips').insert({
     tier,
-    pickup_address,
-    dropoff_address,
-    estimated_fare: estimated_fare ? parseFloat(estimated_fare) : null,
-    surge_multiplier: surge_multiplier ? parseFloat(surge_multiplier) : 1,
-    payment_method,
-    passenger_count: parseInt(passengers) || 1,
-    special_requirements: special_requirements || null,
-    contact_name,
-    contact_phone,
+    pickup_address: asString(body.pickup_address),
+    dropoff_address: asString(body.dropoff_address),
+    estimated_fare: asNumber(body.estimated_fare),
+    surge_multiplier: asNumber(body.surge_multiplier, 1),
+    payment_method: paymentMethod,
+    passenger_count: asInt(body.passengers, 1),
+    special_requirements: asString(body.special_requirements) || null,
+    contact_name: asString(body.contact_name),
+    contact_phone: asString(body.contact_phone),
     status: 'requested',
-    payment_status: payment_method === 'card_hold' ? 'holding' : 'transfer_pending',
+    payment_status: paymentMethod === 'card_hold' ? 'holding' : 'transfer_pending',
     rider_verified_driver: false,
     driver_verified_rider: false,
     panic_triggered: false,
@@ -41,20 +42,20 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     console.error('trips insert error:', error)
-    return NextResponse.json({ error: 'Failed to create trip' }, { status: 500 })
+    return serverError('Failed to create trip')
   }
 
   void db.from('notifications').insert({
     user_id: null,
     type: tier === 'executive' ? 'executive_trip_request' : 'go_trip_request',
     title: `New ${tier === 'executive' ? 'Executive' : 'Go'} Trip`,
-    body: `${pickup_address} → ${dropoff_address} — ${contact_name} · ${contact_phone}`,
+    body: `${asString(body.pickup_address)} → ${asString(body.dropoff_address)} — ${asString(body.contact_name)} · ${asString(body.contact_phone)}`,
     data: {
       trip_id: data.id,
       tier,
-      payment_method,
-      estimated_fare,
-      contact_phone,
+      payment_method: paymentMethod,
+      estimated_fare: asNumber(body.estimated_fare),
+      contact_phone: asString(body.contact_phone),
     },
   })
 
