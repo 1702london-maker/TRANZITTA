@@ -25,7 +25,7 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <Footer />
-<WhatsAppButton />
+      <WhatsAppButton />
     </>
   )
 }

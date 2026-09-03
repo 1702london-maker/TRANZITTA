@@ -1,6 +1,7 @@
 'use client'
 
 import { MapPin, Navigation, ShieldCheck } from 'lucide-react'
+import { findLagosLocation } from '@/lib/tranzitta/lagos-locations'
 
 export default function RoutePreviewMap({
   pickup,
@@ -11,41 +12,38 @@ export default function RoutePreviewMap({
   dropoff: string
   compact?: boolean
 }) {
-  const hasPickup = pickup.trim().length > 2
-  const hasDropoff = dropoff.trim().length > 2
+  const pickupLocation = findLagosLocation(pickup)
+  const dropoffLocation = findLagosLocation(dropoff)
+  const hasPickup = Boolean(pickupLocation)
+  const hasDropoff = Boolean(dropoffLocation)
   const hasRoute = hasPickup && hasDropoff
+  const mapSrc = getGoogleMapSrc(
+    pickupLocation ? `${pickupLocation.name}, ${pickupLocation.area}, Lagos, Nigeria` : '',
+    dropoffLocation ? `${dropoffLocation.name}, ${dropoffLocation.area}, Lagos, Nigeria` : ''
+  )
 
   return (
-    <div className={`relative overflow-hidden rounded-[26px] border trz-map-bg ${compact ? 'h-[260px]' : 'h-[440px]'}`} style={{ borderColor: 'var(--sage-border)' }}>
-      <div className="absolute inset-0 opacity-75" style={{
-        background: 'linear-gradient(90deg, rgba(31,107,70,0.08) 1px, transparent 1px 64px), linear-gradient(0deg, rgba(31,107,70,0.08) 1px, transparent 1px 64px)',
+    <div className={`relative overflow-hidden rounded-[26px] border bg-[#F8FAF3] shadow-sm ${compact ? 'h-[260px]' : 'h-[440px]'}`} style={{ borderColor: 'var(--sage-border)' }}>
+      <iframe
+        title="Tranzitta Lagos route map"
+        src={mapSrc}
+        className="absolute inset-0 h-full w-full border-0"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+      <div className="pointer-events-none absolute inset-0" style={{
+        background: 'linear-gradient(180deg, rgba(255,249,242,0.34), rgba(241,246,234,0.12) 38%, rgba(31,107,70,0.12))',
+        mixBlendMode: 'multiply',
       }} />
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 720 420" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M-20 360 C110 304 166 344 258 274 C350 204 426 234 536 150 C618 88 672 84 750 54" fill="none" stroke="#DDE9D2" strokeWidth="26" strokeLinecap="round" />
-        <path d="M-20 360 C110 304 166 344 258 274 C350 204 426 234 536 150 C618 88 672 84 750 54" fill="none" stroke="#FFFFFF" strokeWidth="18" strokeLinecap="round" />
-        {hasRoute ? (
-          <path d="M142 304 C218 252 294 282 368 218 C442 154 508 176 586 112" fill="none" stroke="#D96B1F" strokeWidth="7" strokeLinecap="round" strokeDasharray="14 12" />
-        ) : null}
-      </svg>
-
-      <div className="absolute left-[17%] top-[66%] -translate-x-1/2 -translate-y-1/2">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-full text-white shadow-xl ${hasPickup ? '' : 'opacity-35'}`} style={{ background: '#1F6B46' }}>
-          <Navigation size={21} />
-        </div>
-      </div>
-      <div className="absolute left-[81%] top-[28%] -translate-x-1/2 -translate-y-1/2">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-full text-white shadow-xl ${hasDropoff ? '' : 'opacity-35'}`} style={{ background: '#D96B1F' }}>
-          <MapPin size={22} />
-        </div>
-      </div>
 
       <div className="absolute left-4 right-4 top-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="rounded-2xl bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
-          <p className="text-[11px] font-black uppercase tracking-[0.08em] trz-muted">Route Preview</p>
-          <p className="mt-1 text-sm font-black trz-ink">{hasRoute ? `${pickup} to ${dropoff}` : 'Choose pickup and destination'}</p>
+        <div className="rounded-2xl bg-white/92 px-4 py-3 shadow-sm backdrop-blur">
+          <p className="text-[11px] font-black uppercase tracking-[0.08em] trz-muted">Google Map</p>
+          <p className="mt-1 text-sm font-black trz-ink">{hasRoute ? `${pickupLocation!.name} to ${dropoffLocation!.name}` : 'Seeded Lagos locations'}</p>
         </div>
-        <div className="rounded-full bg-white/90 px-3 py-2 text-xs font-black trz-orange shadow-sm backdrop-blur">
-          {hasRoute ? '12 min ETA preview' : 'Driver match locked'}
+        <div className="rounded-full bg-white/92 px-3 py-2 text-xs font-black trz-orange shadow-sm backdrop-blur">
+          {hasRoute ? 'Live directions' : 'Lagos only for launch'}
         </div>
       </div>
 
@@ -55,7 +53,7 @@ export default function RoutePreviewMap({
           ['Drivers', hasRoute ? 'Register to unlock' : 'Hidden for safety'],
           ['Safety', 'Panic support active'],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-2xl bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+          <div key={label} className="rounded-2xl bg-white/92 px-4 py-3 shadow-sm backdrop-blur">
             <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.08em] trz-muted">
               {label === 'Safety' ? <ShieldCheck size={13} /> : null}
               {label}
@@ -64,6 +62,39 @@ export default function RoutePreviewMap({
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function getGoogleMapSrc(pickup: string, dropoff: string) {
+  const lagosCenter = 'Lagos, Nigeria'
+
+  if (pickup && dropoff) {
+    const params = new URLSearchParams({
+      saddr: pickup,
+      daddr: dropoff,
+      output: 'embed',
+    })
+    return `https://maps.google.com/maps?${params.toString()}`
+  }
+
+  const query = pickup || dropoff || lagosCenter
+  const params = new URLSearchParams({
+    q: query,
+    z: pickup || dropoff ? '14' : '11',
+    output: 'embed',
+  })
+  return `https://maps.google.com/maps?${params.toString()}`
+}
+
+function MapPinLine({ tone, label }: { tone: 'pickup' | 'dropoff'; label: string }) {
+  const Icon = tone === 'pickup' ? Navigation : MapPin
+  return (
+    <div className="flex items-center gap-2 text-xs font-black trz-ink">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full text-white" style={{ background: tone === 'pickup' ? '#1F6B46' : '#D96B1F' }}>
+        <Icon size={14} />
+      </span>
+      <span className="truncate">{label}</span>
     </div>
   )
 }
