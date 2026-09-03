@@ -6,6 +6,8 @@ import Navbar from '@/components/Navbar'
 import StickyBar from '@/components/StickyBar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import LocationInput from '@/components/go/LocationInput'
+import RoutePreviewMap from '@/components/go/RoutePreviewMap'
 
 export default function GoPage() {
   const [pickup, setPickup] = useState('')
@@ -48,22 +50,12 @@ export default function GoPage() {
           </div>
 
           {/* Booking widget */}
-          <motion.div className="w-full max-w-sm gradient-frame rounded-2xl p-6"
+          <motion.div className="w-full max-w-md gradient-frame rounded-2xl p-6"
             initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
             <h2 className="font-extrabold trz-ink mb-5 text-lg">Where to?</h2>
             <div className="space-y-3 mb-5">
-              <div className="relative">
-                <div className="w-3 h-3 rounded-full absolute left-3.5 top-1/2 -translate-y-1/2" style={{ background: 'var(--africa-green)' }} />
-                <input value={pickup} onChange={e => setPickup(e.target.value)}
-                  className="w-full trz-input rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-orange-300"
-                  placeholder="Pickup location" />
-              </div>
-              <div className="relative">
-                <div className="w-3 h-3 rounded-full absolute left-3.5 top-1/2 -translate-y-1/2" style={{ background: 'var(--orange-deep)' }} />
-                <input value={dropoff} onChange={e => setDropoff(e.target.value)}
-                  className="w-full trz-input rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-orange-300"
-                  placeholder="Where are you going?" />
-              </div>
+              <LocationInput value={pickup} onChange={setPickup} placeholder="Pickup location" tone="pickup" />
+              <LocationInput value={dropoff} onChange={setDropoff} placeholder="Where are you going?" tone="dropoff" />
             </div>
             <div className="flex gap-2 mb-5">
               <button onClick={() => setListening(!listening)}
@@ -88,6 +80,12 @@ export default function GoPage() {
             </Link>
             <p className="mt-3 text-center text-xs trz-muted">Matching drivers are shown after registration.</p>
           </motion.div>
+        </section>
+
+        <section className="px-4 pb-16" style={{ background: 'var(--warm-white)' }}>
+          <div className="mx-auto max-w-6xl">
+            <RoutePreviewMap pickup={pickup} dropoff={dropoff} />
+          </div>
         </section>
 
         {/* Features */}
