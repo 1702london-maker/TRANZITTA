@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Log notification to ops
-  await db.from('notifications').insert({
+  // Log notification to ops (fire and forget — ignore errors)
+  void db.from('notifications').insert({
     user_id: null,
     type: 'school_enquiry',
     title: 'New School Enquiry',
     body: `${child_name} — ${school_name} — submitted by parent`,
     data: { enquiry_id: data.id }
-  }).catch(() => {})
+  })
 
   return NextResponse.json({ success: true, enquiry: data })
 }
