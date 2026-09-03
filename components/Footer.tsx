@@ -131,8 +131,8 @@ export default function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-sm trz-muted sm:flex-row sm:text-left">
           <p>Copyright 2026 Tranzitta Nigeria.</p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-orange-700">Terms</Link>
-            <Link href="#" className="hover:text-orange-700">Privacy</Link>
+            <Link href="/terms" className="hover:text-orange-700">Terms</Link>
+            <Link href="/privacy" className="hover:text-orange-700">Privacy</Link>
           </div>
         </div>
       </div>
