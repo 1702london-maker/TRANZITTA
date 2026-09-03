@@ -82,40 +82,32 @@ export default function VerticalsGrid() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {VERTICALS.map((v, i) => (
             <motion.div key={v.id}
-              className="flip-card rounded-2xl cursor-pointer"
+              className="trz-card rounded-2xl p-6 flex min-h-[300px] flex-col justify-between glow-card"
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }} viewport={{ once: true }}>
-              <div className="flip-card-inner rounded-2xl" style={{ minHeight: 280 }}>
-                {/* Front */}
-                <div className="flip-card-face trz-card rounded-2xl p-6 flex flex-col justify-between glow-card">
-                  <div>
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-4"
-                      style={{ background: v.bg }}>
-                      {v.icon}
-                    </div>
-                    <h3 className="text-lg font-extrabold trz-ink mb-1">{v.title}</h3>
-                    <p className="text-xs font-semibold mb-3" style={{ color: v.color }}>{v.sub}</p>
-                    <p className="text-sm trz-muted leading-relaxed">{v.desc}</p>
+              <div>
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+                    style={{ background: v.bg }}>
+                    {v.icon}
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {v.tags.map(t => (
-                      <span key={t} className="text-xs px-2.5 py-1 rounded-full font-medium trz-sage-pill">{t}</span>
-                    ))}
-                  </div>
+                  <span className="rounded-full px-3 py-1 text-xs font-extrabold" style={{ background: `${v.color}14`, color: v.color }}>
+                    {v.sub}
+                  </span>
                 </div>
-                {/* Back */}
-                <div className="flip-card-back rounded-2xl flex flex-col items-center justify-center p-6 text-center"
-                  style={{ background: `linear-gradient(135deg, ${v.color}15, ${v.color}08)`, border: `2px solid ${v.color}20` }}>
-                  <div className="text-4xl mb-4">{v.icon}</div>
-                  <h3 className="text-xl font-extrabold mb-2" style={{ color: v.color }}>{v.title}</h3>
-                  <p className="text-sm trz-muted mb-6">{v.sub}</p>
-                  <Link href={v.href}
-                    className="px-6 py-3 rounded-full font-bold text-white text-sm transition-transform hover:scale-105"
-                    style={{ background: v.color }}>
-                    {v.cta} →
-                  </Link>
+                <h3 className="text-xl font-extrabold trz-ink mb-2">{v.title}</h3>
+                <p className="text-sm trz-muted leading-relaxed">{v.desc}</p>
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {v.tags.map(t => (
+                    <span key={t} className="text-xs px-2.5 py-1 rounded-full font-medium trz-sage-pill">{t}</span>
+                  ))}
                 </div>
               </div>
+              <Link href={v.href}
+                className="mt-6 inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-extrabold text-white transition-transform hover:scale-105"
+                style={{ background: v.color }}>
+                {v.cta} →
+              </Link>
             </motion.div>
           ))}
 

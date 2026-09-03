@@ -10,6 +10,7 @@ import DriverCTA from '@/components/DriverCTA'
 import ContactSection from '@/components/ContactSection'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import FloatingVerticalBar from '@/components/FloatingVerticalBar'
 
 export default function HomePage() {
   return (
@@ -27,6 +28,7 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <Footer />
+      <FloatingVerticalBar />
       <WhatsAppButton />
     </>
   )

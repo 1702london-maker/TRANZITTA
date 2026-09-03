@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
@@ -103,9 +104,15 @@ export default function Hero() {
           <text x="1340" y="94" textAnchor="middle" fill="#6F875B" fontSize="7" fontWeight="900" letterSpacing="2" fontFamily="'Plus Jakarta Sans',sans-serif">JOS</text>
         </svg>
 
-        {/* Animated bus */}
-        <div className="absolute bus-drive" style={{ bottom: 16, left: 0 }}>
-          <svg width="110" height="36" viewBox="0 0 110 36">
+        {/* Animated Tranzitta fleet */}
+        <div className="absolute fleet-drive fleet-logo-car" style={{ bottom: 15, left: 0 }}>
+          <div className="relative h-12 w-12 rounded-[14px] shadow-lg">
+            <Image src="/tranzitta-logo.png" alt="" fill sizes="48px" className="object-contain" />
+          </div>
+        </div>
+
+        <div className="absolute fleet-drive fleet-bus" style={{ bottom: 16, left: 0 }}>
+          <svg width="118" height="40" viewBox="0 0 118 40">
             <rect x="3" y="3" width="97" height="26" fill="#F28A3D" rx="6" />
             <rect x="3" y="3" width="97" height="9" fill="#D96B1F" rx="6" />
             <rect x="8" y="7" width="18" height="12" fill="rgba(255,255,255,0.35)" rx="2" />
@@ -117,21 +124,23 @@ export default function Hero() {
             <circle cx="20" cy="31" r="2" fill="#7EA06D" />
             <circle cx="82" cy="31" r="5" fill="#183024" />
             <circle cx="82" cy="31" r="2" fill="#7EA06D" />
-            <text x="5" y="21" fill="white" fontSize="5" fontWeight="800">TRANZITTA</text>
+            <text x="5" y="21" fill="white" fontSize="5" fontWeight="800">TRANZITTA BUS</text>
           </svg>
         </div>
 
-        {/* Animated car */}
-        <div className="absolute car-drive" style={{ bottom: 18, left: 0, animationDuration: '11s', animationDelay: '4s' }}>
-          <svg width="60" height="28" viewBox="0 0 60 28">
-            <rect x="4" y="10" width="52" height="14" fill="#183024" rx="4" />
-            <rect x="10" y="4" width="34" height="12" fill="#213A2B" rx="4" />
-            <rect x="13" y="6" width="14" height="8" fill="rgba(255,255,255,0.3)" rx="2" />
-            <rect x="30" y="6" width="10" height="8" fill="rgba(255,255,255,0.2)" rx="2" />
-            <circle cx="14" cy="24" r="4" fill="#333" />
-            <circle cx="46" cy="24" r="4" fill="#333" />
-            <rect x="0" y="13" width="6" height="4" fill="#F5D840" rx="1" />
-            <rect x="54" y="13" width="6" height="4" fill="#D96B1F" rx="1" />
+        <div className="absolute fleet-drive fleet-jeep" style={{ bottom: 17, left: 0 }}>
+          <svg width="82" height="34" viewBox="0 0 82 34">
+            <rect x="8" y="11" width="64" height="16" fill="#17271E" rx="5" />
+            <path d="M20 11h35l9 8H12l8-8Z" fill="#213A2B" />
+            <rect x="23" y="13" width="14" height="8" fill="rgba(255,255,255,0.34)" rx="2" />
+            <rect x="41" y="13" width="13" height="8" fill="rgba(255,255,255,0.23)" rx="2" />
+            <rect x="4" y="18" width="8" height="4" fill="#F5D840" rx="1" />
+            <rect x="69" y="18" width="8" height="4" fill="#D96B1F" rx="1" />
+            <circle cx="22" cy="28" r="5" fill="#101714" />
+            <circle cx="22" cy="28" r="2" fill="#F8C84E" />
+            <circle cx="60" cy="28" r="5" fill="#101714" />
+            <circle cx="60" cy="28" r="2" fill="#F8C84E" />
+            <text x="26" y="26" fill="#FFE2B8" fontSize="5" fontWeight="900">VIP</text>
           </svg>
         </div>
 
@@ -203,13 +212,6 @@ export default function Hero() {
           ))}
         </motion.div>
       </div>
-
-      <motion.div className="absolute left-1/2 -translate-x-1/2 scroll-arrow" style={{ bottom: 56 }}
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}>
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-          <path d="M12 5v14M5 12l7 7 7-7" stroke="#7EA06D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </motion.div>
     </section>
   )
 }

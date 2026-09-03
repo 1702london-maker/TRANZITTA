@@ -27,10 +27,10 @@ export default function Navbar() {
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'trz-nav-panel-scrolled' : 'trz-nav-panel'}`}
       style={{ top: 38 }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <Image src="/tranzitta-logo.png" alt="Tranzitta" width={140} height={40} className="h-9 w-auto object-contain" priority />
+          <Image src="/tranzitta-logo.png" alt="Tranzitta" width={210} height={64} className="h-12 w-auto object-contain sm:h-14" priority />
         </Link>
 
         {/* Desktop Nav */}
