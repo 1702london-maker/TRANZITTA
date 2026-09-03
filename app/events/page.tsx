@@ -281,9 +281,9 @@ export default function EventsPage() {
                       className="relative h-1.5 rounded-full overflow-hidden transition-all"
                       style={{ width: i === activeStep ? 32 : 12, background: 'rgba(255,255,255,0.2)' }}>
                       {i === activeStep && (
-                        <motion.div className="absolute inset-0 rounded-full" style={{ background: '#D96B1F' }}
-                          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 3.5, ease: 'linear' }}
-                          style={{ transformOrigin: 'left', background: '#D96B1F' }} />
+                        <motion.div className="absolute inset-0 rounded-full"
+                          style={{ transformOrigin: 'left', background: '#D96B1F' }}
+                          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 3.5, ease: 'linear' }} />
                       )}
                     </button>
                   ))}
