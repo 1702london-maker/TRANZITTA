@@ -15,6 +15,10 @@ type DriverTrip = {
   total_fare: number | null
   driver_payment_status?: string | null
   driver_payment_method?: string | null
+  contact_name?: string | null
+  contact_phone?: string | null
+  traffic_duration_seconds?: number | null
+  distance_meters?: number | null
   requested_at: string
 }
 
@@ -23,6 +27,7 @@ type DriverDashboard = {
   driver: { status: string; rating: number; total_trips: number; subscription_status?: string; subscription_tier?: string; subscription_expires_at?: string | null } | null
   activeTrip: DriverTrip | null
   trips: DriverTrip[]
+  openTrips: DriverTrip[]
   earnings: { completed_today: number; today_gross: number; today_net: number; driver_share_rate: number }
 }
 
@@ -86,8 +91,54 @@ export default function DriverDashboardPage() {
     }
   }
 
+  const confirmPaymentReceived = async (trip: DriverTrip) => {
+    setMessage('')
+    const supabase = createBrowserSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+
+    const fare = Number(trip.total_fare ?? trip.controlled_fare ?? trip.estimated_fare ?? 0)
+    const res = await fetch(`/api/go/trips/${trip.id}/payment`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        actor: 'driver',
+        method: trip.driver_payment_method || 'driver_account',
+        amount: fare,
+      }),
+    })
+    const body = await res.json().catch(() => null)
+    if (!res.ok) {
+      setMessage(body?.error || 'Could not confirm payment received.')
+      return
+    }
+    await loadDashboard()
+  }
+
+  const acceptRide = async (tripId: string) => {
+    setMessage('')
+    const supabase = createBrowserSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+
+    const res = await fetch(`/api/driver/trips/${tripId}/accept`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    const body = await res.json().catch(() => null)
+    if (!res.ok) {
+      setMessage(body?.error || 'Could not accept this ride.')
+      return
+    }
+    await loadDashboard()
+  }
+
   const name = dashboard?.profile.full_name || 'Driver'
   const trips = dashboard?.trips ?? []
+  const openTrips = dashboard?.openTrips ?? []
   const activeTrip = dashboard?.activeTrip
   const earnings = dashboard?.earnings
 
@@ -154,6 +205,28 @@ export default function DriverDashboardPage() {
                 <p className="text-xs trz-muted mt-1">Tap Online above to receive trips</p>
               </div>
             )}
+
+            <div className="mt-5">
+              <h3 className="mb-3 text-sm font-black trz-ink">Open Go Requests</h3>
+              {!online ? (
+                <div className="trz-card rounded-2xl p-5 text-sm font-bold trz-muted">Go online to view ride requests.</div>
+              ) : openTrips.length === 0 ? (
+                <div className="trz-card rounded-2xl p-5 text-sm font-bold trz-muted">No open rider requests right now.</div>
+              ) : openTrips.map((trip) => (
+                <div key={trip.id} className="trz-card mb-3 rounded-2xl p-4">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-black trz-ink">{trip.pickup_address} to {trip.dropoff_address}</p>
+                      <p className="mt-1 text-xs trz-muted">{trip.contact_name || 'Verified rider'} · {(trip.distance_meters ? `${(trip.distance_meters / 1000).toFixed(1)} km` : 'Distance pending')}</p>
+                    </div>
+                    <p className="text-right text-lg font-black trz-orange">₦{Number(trip.controlled_fare ?? trip.estimated_fare ?? 0).toLocaleString()}</p>
+                  </div>
+                  <button onClick={() => acceptRide(trip.id)} className="w-full rounded-xl py-3 text-sm font-black text-white" style={{ background: 'var(--orange-deep)' }}>
+                    Accept Tranzitta Fare
+                  </button>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
 
@@ -163,15 +236,24 @@ export default function DriverDashboardPage() {
             {trips.length === 0 ? (
               <div className="trz-card rounded-2xl p-8 text-center text-sm font-bold trz-muted">No trips assigned yet.</div>
             ) : trips.map(t => (
-              <div key={t.id} className="trz-card rounded-2xl p-4 mb-3 flex items-center justify-between">
-                <div>
-                  <div className="font-bold trz-ink text-sm">{t.pickup_address} to {t.dropoff_address}</div>
-                  <div className="text-xs trz-muted mt-0.5">{t.id.slice(0, 8)} · {new Date(t.requested_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+              <div key={t.id} className="trz-card rounded-2xl p-4 mb-3">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <div className="font-bold trz-ink text-sm">{t.pickup_address} to {t.dropoff_address}</div>
+                    <div className="text-xs trz-muted mt-0.5">{t.id.slice(0, 8)} · {new Date(t.requested_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-extrabold trz-orange">₦{Number(t.total_fare ?? t.controlled_fare ?? t.estimated_fare ?? 0).toLocaleString()}</div>
+                    <div className="text-xs trz-muted capitalize">{t.status}</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-extrabold trz-orange">₦{Number(t.total_fare ?? t.controlled_fare ?? t.estimated_fare ?? 0).toLocaleString()}</div>
-                  <div className="text-xs trz-muted capitalize">{(t.driver_payment_status || 'payment pending').replaceAll('_', ' ')}</div>
-                  <div className="text-xs trz-muted capitalize">{t.status}</div>
+                <div className="flex items-center justify-between gap-3 rounded-xl px-3 py-2" style={{ background: '#F1F6EA' }}>
+                  <span className="text-xs font-bold capitalize trz-muted">{(t.driver_payment_status || 'payment pending').replaceAll('_', ' ')}</span>
+                  {t.driver_payment_status !== 'confirmed' ? (
+                    <button onClick={() => confirmPaymentReceived(t)} className="rounded-full px-3 py-1.5 text-xs font-black text-white" style={{ background: '#183024' }}>
+                      Confirm Received
+                    </button>
+                  ) : <span className="text-xs font-black" style={{ color: '#1F6B46' }}>Confirmed</span>}
                 </div>
               </div>
             ))}

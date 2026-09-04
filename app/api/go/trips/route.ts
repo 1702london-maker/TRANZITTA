@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
 import { asInt, asNumber, asString, readJson, requireFields, serverError } from '@/lib/api'
+import { requireAuth } from '@/lib/server-auth'
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAuth(req, ['rider', 'superadmin'])
+  if (!auth.ok) return auth.response
+
   const parsed = await readJson<Record<string, unknown>>(req)
   if (!parsed.ok) return parsed.response
 
@@ -23,6 +27,7 @@ export async function POST(req: NextRequest) {
   const db = supabaseAdmin()
 
   const { data, error } = await db.from('trips').insert({
+    rider_id: auth.context.userId,
     tier,
     pickup_address: asString(body.pickup_address),
     dropoff_address: asString(body.dropoff_address),

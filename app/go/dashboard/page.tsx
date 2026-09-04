@@ -14,10 +14,15 @@ type GoTrip = {
   pickup_address: string
   dropoff_address: string
   estimated_fare: number | null
+  controlled_fare: number | null
   total_fare: number | null
   surge_multiplier: number | null
   payment_method: string
   payment_status: string
+  driver_payment_method?: string | null
+  driver_payment_status?: string | null
+  traffic_duration_seconds?: number | null
+  distance_meters?: number | null
   requested_at: string
   rider_verified_driver: boolean
   driver_verified_rider: boolean
@@ -104,7 +109,7 @@ export default function GoDashboardPage() {
                 <Card className="p-8 text-center">
                   <div className="mb-3 text-4xl">🚗</div>
                   <h2 className="font-black trz-ink">No active ride yet</h2>
-                  <p className="mx-auto mt-2 max-w-sm text-sm trz-muted">Book a ride first. Your matched driver, fare hold and verification status will appear here.</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm trz-muted">Book a ride first. Your matched driver, controlled fare and payment verification status will appear here.</p>
                   <Link href="/go/book" className="mt-5 inline-block rounded-xl px-6 py-3 text-sm font-black text-white" style={{ background: '#D96B1F' }}>
                     Book a Ride →
                   </Link>
@@ -161,8 +166,42 @@ export default function GoDashboardPage() {
 }
 
 function TripCard({ trip, active = false }: { trip: GoTrip; active?: boolean }) {
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
   const driverName = trip.driver?.user?.full_name || 'Driver matching'
   const vehicle = trip.driver?.vehicle ? `${trip.driver.vehicle.make} ${trip.driver.vehicle.model} · ${trip.driver.vehicle.plate_number}` : 'Vehicle appears after matching'
+  const fare = Number(trip.total_fare ?? trip.controlled_fare ?? trip.estimated_fare ?? 0)
+  const paymentStatus = (trip.driver_payment_status || 'pending').replaceAll('_', ' ')
+
+  const markPaid = async () => {
+    setBusy(true)
+    setMessage('')
+    const supabase = createBrowserSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      window.location.href = '/go/login?next=/go/dashboard'
+      return
+    }
+    const res = await fetch(`/api/go/trips/${trip.id}/payment`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        actor: 'rider',
+        method: trip.driver_payment_method || trip.payment_method || 'driver_account',
+        amount: fare,
+      }),
+    })
+    const body = await res.json().catch(() => null)
+    if (!res.ok) {
+      setMessage(body?.error || 'Could not mark this ride as paid.')
+      setBusy(false)
+      return
+    }
+    window.location.reload()
+  }
 
   return (
     <Card className="overflow-hidden">
@@ -182,18 +221,35 @@ function TripCard({ trip, active = false }: { trip: GoTrip; active?: boolean }) 
               {driverName.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-black trz-ink">{driverName}</p>
-              <p className="text-sm trz-muted">{vehicle}</p>
+            <p className="font-black trz-ink">{driverName}</p>
+            <p className="text-sm trz-muted">{vehicle}</p>
             </div>
           </div>
         ) : null}
         <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: '#F1F6EA' }}>
           <div>
-            <p className="text-xs capitalize trz-muted">{trip.payment_method}</p>
-            <p className="font-black trz-ink">₦{Number(trip.total_fare ?? trip.estimated_fare ?? 0).toLocaleString()}</p>
+            <p className="text-xs capitalize trz-muted">Tranzitta controlled fare</p>
+            <p className="font-black trz-ink">₦{fare.toLocaleString()}</p>
           </div>
-          <p className="text-xs font-bold trz-muted">{new Date(trip.requested_at).toLocaleString()}</p>
+          <div className="text-right">
+            <p className="text-xs font-bold trz-muted">{new Date(trip.requested_at).toLocaleString()}</p>
+            <p className="mt-1 text-xs font-black capitalize trz-orange">{paymentStatus}</p>
+          </div>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-xl px-4 py-3 text-sm font-bold" style={{ background: '#FFF0E4', color: '#8A3B0E' }}>
+            {(trip.distance_meters ? `${(trip.distance_meters / 1000).toFixed(1)} km` : 'Distance pending')}
+          </div>
+          <div className="rounded-xl px-4 py-3 text-sm font-bold" style={{ background: '#FFF0E4', color: '#8A3B0E' }}>
+            {(trip.traffic_duration_seconds ? `${Math.round(trip.traffic_duration_seconds / 60)} min` : 'ETA pending')}
+          </div>
+        </div>
+        {active && trip.driver_payment_status !== 'confirmed' ? (
+          <button onClick={markPaid} disabled={busy} className="w-full rounded-xl py-3 text-sm font-black text-white disabled:opacity-60" style={{ background: '#183024' }}>
+            {busy ? 'Saving...' : 'Mark Fare Paid'}
+          </button>
+        ) : null}
+        {message ? <p className="rounded-xl px-4 py-3 text-xs font-bold" style={{ background: '#FFF0E4', color: '#8A3B0E' }}>{message}</p> : null}
       </div>
     </Card>
   )

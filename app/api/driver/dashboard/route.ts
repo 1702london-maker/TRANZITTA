@@ -29,6 +29,24 @@ export async function GET(req: NextRequest) {
     return serverError('Failed to load driver trips')
   }
 
+  const subscriptionActive = driver?.subscription_status === 'active' &&
+    (!driver.subscription_expires_at || new Date(driver.subscription_expires_at) > new Date())
+
+  const { data: openTrips, error: openTripsError } = subscriptionActive
+    ? await auth.db
+      .from('trips')
+      .select('id,tier,status,pickup_address,dropoff_address,estimated_fare,controlled_fare,total_fare,payment_status,driver_payment_status,driver_payment_method,requested_at,contact_name,contact_phone,traffic_duration_seconds,distance_meters')
+      .is('driver_id', null)
+      .eq('status', 'requested')
+      .order('requested_at', { ascending: false })
+      .limit(20)
+    : { data: [], error: null }
+
+  if (openTripsError) {
+    console.error('open trips error:', openTripsError)
+    return serverError('Failed to load open ride requests')
+  }
+
   const completedToday = (trips ?? []).filter((trip) => {
     if (trip.status !== 'completed') return false
     const completedAt = trip.dropoff_at ? new Date(trip.dropoff_at) : null
@@ -41,6 +59,7 @@ export async function GET(req: NextRequest) {
     driver,
     activeTrip: trips?.find((trip) => !['completed', 'cancelled'].includes(trip.status)) ?? null,
     trips: trips ?? [],
+    openTrips: openTrips ?? [],
     earnings: {
       completed_today: completedToday.length,
       today_gross: todayGross,
