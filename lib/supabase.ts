@@ -1,15 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
 
-function publicEnv(name: string) {
-  const value = process.env[name]
-  if (!value) throw new Error(`${name} is required`)
-  return value
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+function publicSupabaseEnv() {
+  if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL is required')
+  if (!supabaseAnonKey) throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY is required')
+  return { supabaseUrl, supabaseAnonKey }
 }
 
 export const supabase = () =>
-  createClient(publicEnv('NEXT_PUBLIC_SUPABASE_URL'), publicEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'))
+  createClient(publicSupabaseEnv().supabaseUrl, publicSupabaseEnv().supabaseAnonKey)
 
 export function createBrowserSupabase() {
-  return createBrowserClient(publicEnv('NEXT_PUBLIC_SUPABASE_URL'), publicEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'))
+  const env = publicSupabaseEnv()
+  return createBrowserClient(env.supabaseUrl, env.supabaseAnonKey)
 }
