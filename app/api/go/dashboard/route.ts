@@ -3,7 +3,7 @@ import { requireAuth } from '@/lib/server-auth'
 import { serverError } from '@/lib/api'
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req, ['rider', 'superadmin'])
+  const auth = await requireAuth(req, ['rider', 'parent', 'superadmin'])
   if (!auth.ok) return auth.response
 
   const { data: trips, error } = await auth.db

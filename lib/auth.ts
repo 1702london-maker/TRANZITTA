@@ -94,7 +94,7 @@ export const portalConfig: Record<PortalKey, {
 }
 
 export const protectedRoutes: Array<{ prefix: string; portal: PortalKey; roles: UserRole[] }> = [
-  { prefix: '/go/dashboard', portal: 'go', roles: ['rider', 'superadmin'] },
+  { prefix: '/go/dashboard', portal: 'go', roles: ['rider', 'parent', 'superadmin'] },
   { prefix: '/go/track', portal: 'go', roles: ['rider', 'driver', 'ops', 'superadmin'] },
   { prefix: '/school/dashboard', portal: 'school', roles: ['parent', 'ops', 'superadmin'] },
   { prefix: '/school/track', portal: 'school', roles: ['parent', 'driver', 'ops', 'superadmin'] },

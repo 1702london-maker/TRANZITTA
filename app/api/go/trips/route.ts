@@ -4,7 +4,7 @@ import { asInt, asNumber, asString, readJson, requireFields, serverError } from 
 import { requireAuth } from '@/lib/server-auth'
 
 export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req, ['rider', 'superadmin'])
+  const auth = await requireAuth(req, ['rider', 'parent', 'superadmin'])
   if (!auth.ok) return auth.response
 
   const parsed = await readJson<Record<string, unknown>>(req)
