@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
   const { data: driver, error: driverError } = await auth.db
     .from('drivers')
-    .select('id,status,commission_rate,rating,total_trips,last_location_at,verticals,vehicle:vehicle_id(plate_number,make,model,colour,vehicle_class,seats)')
+    .select('id,status,subscription_status,subscription_tier,subscription_expires_at,rating,total_trips,last_location_at,verticals,vehicle:vehicle_id(plate_number,make,model,colour,vehicle_class,seats)')
     .eq('id', auth.context.userId)
     .maybeSingle()
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   const { data: trips, error: tripsError } = await auth.db
     .from('trips')
-    .select('id,tier,status,pickup_address,dropoff_address,estimated_fare,total_fare,payment_status,requested_at,pickup_at,dropoff_at,rider_verified_driver,driver_verified_rider,contact_name,contact_phone')
+    .select('id,tier,status,pickup_address,dropoff_address,estimated_fare,controlled_fare,total_fare,payment_status,driver_payment_status,driver_payment_method,requested_at,pickup_at,dropoff_at,rider_verified_driver,driver_verified_rider,contact_name,contact_phone')
     .eq('driver_id', auth.context.userId)
     .order('requested_at', { ascending: false })
     .limit(30)
@@ -34,8 +34,7 @@ export async function GET(req: NextRequest) {
     const completedAt = trip.dropoff_at ? new Date(trip.dropoff_at) : null
     return completedAt?.toDateString() === new Date().toDateString()
   })
-  const todayGross = completedToday.reduce((sum, trip) => sum + Number(trip.total_fare ?? trip.estimated_fare ?? 0), 0)
-  const commissionRate = Number(driver?.commission_rate ?? 0.15)
+  const todayGross = completedToday.reduce((sum, trip) => sum + Number(trip.total_fare ?? trip.controlled_fare ?? trip.estimated_fare ?? 0), 0)
 
   return NextResponse.json({
     profile: auth.context.profile,
@@ -45,8 +44,8 @@ export async function GET(req: NextRequest) {
     earnings: {
       completed_today: completedToday.length,
       today_gross: todayGross,
-      today_net: Math.round(todayGross * (1 - commissionRate)),
-      commission_rate: commissionRate,
+      today_net: todayGross,
+      driver_share_rate: 1,
     },
   })
 }

@@ -17,6 +17,26 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid driver status' }, { status: 400 })
   }
 
+  if (status === 'online') {
+    const { data: driver, error: driverError } = await auth.db
+      .from('drivers')
+      .select('subscription_status,subscription_expires_at')
+      .eq('id', auth.context.userId)
+      .maybeSingle()
+
+    if (driverError) {
+      console.error('driver subscription gate error:', driverError)
+      return serverError('Failed to verify driver subscription')
+    }
+
+    const expiresAt = driver?.subscription_expires_at ? new Date(driver.subscription_expires_at) : null
+    const subscriptionActive = driver?.subscription_status === 'active' && (!expiresAt || expiresAt > new Date())
+
+    if (!subscriptionActive) {
+      return NextResponse.json({ error: 'Your Tranzitta Go subscription must be active before you can go online.' }, { status: 403 })
+    }
+  }
+
   const lng = asNumber(parsed.data.lng)
   const lat = asNumber(parsed.data.lat)
 

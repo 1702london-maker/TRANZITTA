@@ -11,16 +11,19 @@ type DriverTrip = {
   pickup_address: string
   dropoff_address: string
   estimated_fare: number | null
+  controlled_fare: number | null
   total_fare: number | null
+  driver_payment_status?: string | null
+  driver_payment_method?: string | null
   requested_at: string
 }
 
 type DriverDashboard = {
   profile: { full_name: string; phone: string; role: string }
-  driver: { status: string; rating: number; total_trips: number; commission_rate: number } | null
+  driver: { status: string; rating: number; total_trips: number; subscription_status?: string; subscription_tier?: string; subscription_expires_at?: string | null } | null
   activeTrip: DriverTrip | null
   trips: DriverTrip[]
-  earnings: { completed_today: number; today_gross: number; today_net: number; commission_rate: number }
+  earnings: { completed_today: number; today_gross: number; today_net: number; driver_share_rate: number }
 }
 
 export default function DriverDashboardPage() {
@@ -110,10 +113,23 @@ export default function DriverDashboardPage() {
             <h2 className="font-extrabold trz-ink mb-1">Good morning, {name.split(' ')[0]}</h2>
             <p className="text-sm trz-muted mb-6">{online ? 'You are available for Tranzitta trips' : 'Tap Online to start receiving trips'}</p>
 
+            <div className="trz-card rounded-2xl p-5 mb-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-xs font-black uppercase tracking-[0.08em] trz-muted">Subscription</div>
+                  <div className="mt-1 text-lg font-black trz-ink capitalize">{dashboard?.driver?.subscription_status ?? 'inactive'}</div>
+                  <div className="mt-1 text-xs trz-muted">No active subscription means no Go marketplace access.</div>
+                </div>
+                <div className="rounded-2xl px-4 py-3 text-center text-sm font-black text-white" style={{ background: 'var(--orange-deep)' }}>
+                  {dashboard?.driver?.subscription_tier?.replace('_', ' ') ?? 'Go Access'}
+                </div>
+              </div>
+            </div>
+
             <div className="trz-card rounded-2xl p-6 mb-5">
-              <div className="text-xs trz-muted mb-1">Today&apos;s Earnings</div>
+              <div className="text-xs trz-muted mb-1">Fare Kept Today</div>
               <div className="text-4xl font-extrabold trz-ink">₦{(earnings?.today_net ?? 0).toLocaleString()}</div>
-              <div className="text-sm trz-muted mt-1">{earnings?.completed_today ?? 0} trips · {Math.round((1 - (earnings?.commission_rate ?? 0.15)) * 100)}% driver share</div>
+              <div className="text-sm trz-muted mt-1">{earnings?.completed_today ?? 0} trips · 100% fare kept · monthly subscription active</div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 mb-5">
@@ -153,7 +169,8 @@ export default function DriverDashboardPage() {
                   <div className="text-xs trz-muted mt-0.5">{t.id.slice(0, 8)} · {new Date(t.requested_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-extrabold trz-orange">₦{Number(t.total_fare ?? t.estimated_fare ?? 0).toLocaleString()}</div>
+                  <div className="font-extrabold trz-orange">₦{Number(t.total_fare ?? t.controlled_fare ?? t.estimated_fare ?? 0).toLocaleString()}</div>
+                  <div className="text-xs trz-muted capitalize">{(t.driver_payment_status || 'payment pending').replaceAll('_', ' ')}</div>
                   <div className="text-xs trz-muted capitalize">{t.status}</div>
                 </div>
               </div>
@@ -163,7 +180,7 @@ export default function DriverDashboardPage() {
 
         {tab === 'earnings' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="font-extrabold trz-ink mb-4">Earnings</h2>
+            <h2 className="font-extrabold trz-ink mb-4">Fare Records</h2>
             <div className="trz-card rounded-2xl p-6 mb-4">
               <div className="flex justify-between mb-2">
                 <span className="text-sm trz-muted">This Week</span>
@@ -174,12 +191,12 @@ export default function DriverDashboardPage() {
                 <span className="font-extrabold trz-ink">₦{(earnings?.today_gross ?? 0).toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm trz-muted">Pending Payout</span>
+                <span className="text-sm trz-muted">Pending Confirmation</span>
                 <span className="font-extrabold" style={{ color: 'var(--africa-green)' }}>₦{(earnings?.today_net ?? 0).toLocaleString()}</span>
               </div>
             </div>
             <button className="w-full py-3.5 rounded-xl font-bold text-white text-sm" style={{ background: 'var(--orange-deep)' }}>
-              Request Payout →
+              Confirm Payment Received →
             </button>
           </motion.div>
         )}

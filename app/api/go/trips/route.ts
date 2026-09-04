@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   if (!['go', 'executive'].includes(tier)) {
     return NextResponse.json({ error: 'Invalid tier' }, { status: 400 })
   }
-  if (!['card_hold', 'bank_transfer'].includes(paymentMethod)) {
+  if (!['cash', 'bank_transfer', 'driver_account', 'card_hold'].includes(paymentMethod)) {
     return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 })
   }
 
@@ -27,14 +27,22 @@ export async function POST(req: NextRequest) {
     pickup_address: asString(body.pickup_address),
     dropoff_address: asString(body.dropoff_address),
     estimated_fare: asNumber(body.estimated_fare),
+    controlled_fare: asNumber(body.controlled_fare, asNumber(body.estimated_fare)),
+    fare_provider: asString(body.fare_provider) || 'tranzitta_seeded_lagos',
+    traffic_duration_seconds: asInt(body.traffic_duration_seconds, 0) || null,
+    distance_meters: asInt(body.distance_meters, 0) || null,
     surge_multiplier: asNumber(body.surge_multiplier, 1),
     payment_method: paymentMethod,
+    driver_payment_method: paymentMethod === 'card_hold' ? 'bank_transfer' : paymentMethod,
+    driver_payment_status: 'pending',
+    driver_keeps_full_fare: true,
+    repeat_driver_blocked: true,
     passenger_count: asInt(body.passengers, 1),
     special_requirements: asString(body.special_requirements) || null,
     contact_name: asString(body.contact_name),
     contact_phone: asString(body.contact_phone),
     status: 'requested',
-    payment_status: paymentMethod === 'card_hold' ? 'holding' : 'transfer_pending',
+    payment_status: 'pending',
     rider_verified_driver: false,
     driver_verified_rider: false,
     panic_triggered: false,
@@ -54,8 +62,10 @@ export async function POST(req: NextRequest) {
       trip_id: data.id,
       tier,
       payment_method: paymentMethod,
-      estimated_fare: asNumber(body.estimated_fare),
+      controlled_fare: asNumber(body.controlled_fare, asNumber(body.estimated_fare)),
       contact_phone: asString(body.contact_phone),
+      driver_keeps_full_fare: true,
+      repeat_driver_blocked: true,
     },
   })
 

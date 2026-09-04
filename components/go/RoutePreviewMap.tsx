@@ -49,8 +49,8 @@ export default function RoutePreviewMap({
 
       <div className="absolute bottom-4 left-4 right-4 grid gap-3 sm:grid-cols-3">
         {[
-          ['Fare', hasRoute ? '₦2,400-₦3,100' : 'Preview pending'],
-          ['Drivers', hasRoute ? 'Register to unlock' : 'Hidden for safety'],
+          ['Fare', hasRoute ? 'Controlled by Tranzitta' : 'Preview pending'],
+          ['Drivers', hasRoute ? 'Subscribed only' : 'Hidden for safety'],
           ['Safety', 'Panic support active'],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl bg-white/92 px-4 py-3 shadow-sm backdrop-blur">

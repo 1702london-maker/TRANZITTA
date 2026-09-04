@@ -10,9 +10,9 @@ export default function DriverCTA() {
           className="gradient-frame rounded-3xl p-10 sm:p-14 text-center"
           initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <div className="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center text-3xl trz-blush-card">🚦</div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold trz-ink mb-4">Drive With Tranzitta. Keep 85%.</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold trz-ink mb-4">Drive With Tranzitta. Keep the Fare.</h2>
           <p className="text-base trz-muted mb-8 max-w-xl mx-auto">
-            Nigeria&apos;s most driver-friendly platform. 15% commission, police-vetting support, in-car camera installed for you, serve all 5 verticals from one app.
+            Pay monthly for marketplace access, accept Tranzitta-controlled fares, and keep what the rider pays while the app protects every trip.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/driver"
@@ -27,7 +27,7 @@ export default function DriverCTA() {
             </Link>
           </div>
           <div className="mt-8 grid grid-cols-3 gap-4 max-w-sm mx-auto">
-            {[['85%', 'Of every fare'], ['100%', 'Doc support'], ['5', 'Verticals to serve']].map(([v, l]) => (
+            {[['₦30k+', 'Monthly access'], ['100%', 'Fare kept'], ['5', 'Verticals to serve']].map(([v, l]) => (
               <div key={l} className="text-center">
                 <div className="text-xl font-extrabold trz-orange">{v}</div>
                 <div className="text-xs trz-muted mt-0.5">{l}</div>

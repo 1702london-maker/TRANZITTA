@@ -7,13 +7,13 @@ const VERTICALS = [
     id: 'go',
     title: 'Tranzitta Go',
     sub: 'Everyday rides',
-    desc: 'Request a ride in seconds. Voice search, fare estimate, live driver tracking, panic button. Police-vetted drivers. 15% commission.',
+    desc: 'Request a ride in seconds. Voice search, Tranzitta-controlled fare, live driver tracking, panic button and police-vetted subscribed drivers.',
     icon: '🚗',
     href: '/go',
     color: '#D96B1F',
     bg: 'var(--orange-blush)',
     cta: 'Book a Ride',
-    tags: ['Per trip', 'Surge pricing', 'Cash & card'],
+    tags: ['Controlled fare', 'Subscribed drivers', 'Payment verified'],
   },
   {
     id: 'school',
@@ -121,7 +121,7 @@ export default function VerticalsGrid() {
               <h3 className="text-lg font-extrabold trz-ink mb-1">Drive With Tranzitta</h3>
               <p className="text-xs font-semibold mb-3 trz-orange">Join the Driver Network</p>
               <p className="text-sm trz-muted leading-relaxed">
-                Police-vetted, fully onboarded. Serve Go, School, Corporate, Events or Airport. Keep 85% of every fare.
+                Police-vetted, fully onboarded. Pay monthly for Go marketplace access, accept Tranzitta-controlled fares and keep the rider fare.
               </p>
             </div>
             <div className="mt-5">

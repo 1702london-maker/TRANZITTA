@@ -11,7 +11,7 @@ const STEPS = [
   { icon: '📋', title: 'Upload Documents', desc: 'Driver\'s licence, police clearance, vehicle photos, insurance, roadworthiness cert.' },
   { icon: '🔍', title: 'Ops Review', desc: 'Our team verifies everything including your home address. Usually 24–48 hours.' },
   { icon: '📹', title: 'Camera Installed', desc: 'We confirm in-car camera installation before activating your account.' },
-  { icon: '🟢', title: 'Go Online', desc: 'Activate on your chosen verticals. Start earning 85% of every fare.' },
+  { icon: '🟢', title: 'Subscribe and Go Online', desc: 'Choose a monthly Go subscription. No active subscription means no marketplace access.' },
 ]
 
 export default function DriverPage() {
@@ -38,14 +38,14 @@ export default function DriverPage() {
             </motion.div>
             <motion.h1 className="text-4xl sm:text-5xl font-extrabold trz-ink mb-5 leading-tight"
               initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-              Drive With Tranzitta.<br /><span style={{ color: 'var(--orange-deep)' }}>Keep 85%.</span>
+              Drive With Tranzitta.<br /><span style={{ color: 'var(--orange-deep)' }}>Keep the Fare.</span>
             </motion.h1>
             <motion.p className="text-base trz-muted mb-8 max-w-lg leading-relaxed"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-              Nigeria&apos;s most driver-friendly platform. 15% commission, not 25–30%. Serve Go, School, Corporate, Events and Airport from one app. We support your vetting process.
+              Nigeria&apos;s subscription-based driver marketplace. Pay monthly for access, accept Tranzitta-controlled fares, keep the rider fare, and stay protected by verification, camera, GPS and customer support.
             </motion.p>
             <motion.div className="grid grid-cols-3 gap-4 max-w-xs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-              {[['85%', 'You keep'], ['5', 'Verticals'], ['24/7', 'Support']].map(([v, l]) => (
+              {[['₦30k+', 'Monthly access'], ['100%', 'Fare kept'], ['24/7', 'Support']].map(([v, l]) => (
                 <div key={l} className="trz-card rounded-xl p-3 text-center">
                   <div className="text-xl font-extrabold trz-orange">{v}</div>
                   <div className="text-xs trz-muted">{l}</div>

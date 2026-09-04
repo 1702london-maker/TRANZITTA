@@ -11,7 +11,7 @@ const FLOW_STEPS = [
   {
     label: 'Book in Seconds',
     icon: '🚗',
-    desc: 'Enter pickup and destination. Live traffic fare shown instantly. Card hold placed — no cash ever.',
+    desc: 'Enter pickup and destination. Tranzitta checks Lagos traffic and sets the controlled fare before drivers can accept.',
     screen: (
       <div className="p-4 space-y-2.5">
         <div className="text-[10px] font-bold uppercase tracking-wide mb-3" style={{ color: '#D96B1F' }}>Book a Ride</div>
@@ -24,7 +24,7 @@ const FLOW_STEPS = [
         {[
           { label: 'Pickup', val: '📍 Murtala Mohammed Way, VI', icon: '' },
           { label: 'Destination', val: '🏢 Lekki Phase 1', icon: '' },
-          { label: 'Payment', val: '💳 Card Hold', icon: '' },
+          { label: 'Payment', val: '🏦 Driver account / cash verified in-app', icon: '' },
         ].map(f => (
           <div key={f.label} className="rounded-lg px-3 py-2" style={{ background: '#F1F6EA' }}>
             <div className="text-[8px] font-bold uppercase tracking-wide" style={{ color: '#65785F' }}>{f.label}</div>
@@ -34,7 +34,7 @@ const FLOW_STEPS = [
         <div className="rounded-xl p-3 border" style={{ background: 'white', borderColor: '#DDE9D2' }}>
           <div className="flex justify-between items-center">
             <div>
-              <div className="text-[8px]" style={{ color: '#65785F' }}>Estimated Fare</div>
+              <div className="text-[8px]" style={{ color: '#65785F' }}>Controlled Fare</div>
               <div className="text-[12px] font-black" style={{ color: '#183024' }}>₦4,200</div>
             </div>
             <div className="text-[8px] text-right" style={{ color: '#D96B1F' }}>
@@ -44,7 +44,7 @@ const FLOW_STEPS = [
           </div>
         </div>
         <div className="rounded-xl py-2 text-center text-[10px] font-bold text-white" style={{ background: '#1F6B46' }}>
-          Confirm Ride →
+          Confirm Fare →
         </div>
       </div>
     ),
@@ -52,7 +52,7 @@ const FLOW_STEPS = [
   {
     label: 'Driver Matched Instantly',
     icon: '📍',
-    desc: 'Nearest vetted driver matched via live GPS. You see their photo, plate, and rating before they arrive.',
+    desc: 'Only subscribed, vetted drivers can see and select the ride. Repeat-driver preference is blocked for Go.',
     screen: (
       <div className="p-4 space-y-2.5">
         <div className="text-[10px] font-bold" style={{ color: '#183024' }}>Driver Matched</div>
@@ -160,21 +160,21 @@ function PhoneScreen({ children }: { children: React.ReactNode }) {
 }
 
 const PAINS = [
-  { bad: 'Driver demands cash at journey end, then disputes your change', good: 'Zero cash — card held at booking, charged only on arrival' },
+  { bad: 'Driver negotiates a side price and pulls the rider off-platform', good: 'Tranzitta controls the fare — driver accepts it or skips it' },
   { bad: "No idea who's actually behind the wheel — any car, anyone", good: 'BVN + NIN + liveness check — identity confirmed before they drive' },
   { bad: 'Fake profiles and ghost accounts on every platform', good: 'Every account verified against BVN — one real person, one real account' },
-  { bad: 'False complaints with no evidence — your word against theirs', good: 'In-car camera records every trip — disputes resolved with footage, not guesses' },
-  { bad: 'Platform protects drivers but ignores violent riders', good: 'Wall of Shame — verified photo and name published for misconduct, no exceptions' },
-  { bad: 'Surge pricing applied secretly mid-trip with no warning', good: 'Surge shown clearly before you book — must confirm before card is held' },
+  { bad: 'False complaints with no evidence — your word against theirs', good: 'In-car camera, GPS logs and payment confirmation resolve disputes with evidence' },
+  { bad: 'Platform protects drivers but ignores violent riders', good: 'Hall of Shame — verified photo and name escalated publicly after ops/legal review' },
+  { bad: 'Riders and drivers exchange numbers then abandon the platform', good: 'No repeat-driver model — protection only applies to in-app matched trips' },
 ]
 
 const FEATURES = [
   { icon: '🪪', title: 'BVN + NIN + Liveness', body: 'Every rider verified against their BVN and government ID before their first booking. Face matched live. No mismatches, no fake accounts, no exceptions.' },
   { icon: '🔒', title: 'Mutual Verification', body: 'Driver checks your face before you board. You check their plate, name and photo before getting in. Both confirmed — logged with timestamp — then the trip starts.' },
-  { icon: '💸', title: 'Zero Cash — Always', body: 'Card hold at booking. Bank transfer via unique virtual account. No cash discussed, offered, or accepted. Full payment trail. No disputes.' },
+  { icon: '💸', title: 'Driver Keeps the Fare', body: 'Drivers take the full Tranzitta-controlled fare through their account or cash. Rider and driver both confirm payment in-app before the trip closes.' },
   { icon: '📷', title: 'In-Car Camera', body: 'Insurance-grade camera in every vehicle. Interior recorded for 30 days. Live feed accessible to ops during active trips. Protects driver and rider equally.' },
-  { icon: '🧾', title: 'Wall of Shame', body: 'Payment fraud and violent conduct result in verified name and photo published publicly. Agreed to at signup. Every user signs. BVN-backed — legally defensible.' },
-  { icon: '⚡', title: 'Live Traffic Fares', body: 'Fare calculated with Google Maps live traffic data. Surge zones shown clearly before booking. Actual fare charged on actual distance — no hidden additions.' },
+  { icon: '🧾', title: 'Hall of Shame + Police Escalation', body: 'Payment fraud, violent conduct and off-platform abuse can be escalated to police and public social channels after ops/legal review.' },
+  { icon: '⚡', title: 'Traffic-Controlled Fares', body: 'Tranzitta checks traffic, distance, vehicle class and demand to set the fare. Drivers cannot undercut or negotiate inside the system.' },
 ]
 
 const TIERS = [
@@ -183,7 +183,7 @@ const TIERS = [
     icon: '🚗',
     target: 'General public',
     vehicle: 'Clean, AC, 4-door — max 5 years old',
-    pricing: 'Standard per-km + per-min with live traffic',
+    pricing: 'Tranzitta-controlled fare with traffic and demand',
     rating: '4.0 minimum',
     dress: 'Smart casual',
     best: ['Daily commuting', 'City-wide rides', 'Fast booking'],
@@ -193,7 +193,7 @@ const TIERS = [
     icon: '⭐',
     target: 'Corporate & premium',
     vehicle: 'Premium sedan or SUV — luxury spec, max 3 years old',
-    pricing: 'Ops-assisted intelligent pricing — confirmed before booking',
+    pricing: 'Premium Tranzitta-controlled fare — confirmed before booking',
     rating: '4.5 minimum',
     dress: 'Professional — collared shirt minimum',
     best: ['Corporate travel', 'Airport transfers', 'High-value clients'],
@@ -202,10 +202,11 @@ const TIERS = [
 
 const FAQS = [
   { q: 'Why is BVN verification required?', a: 'BVN verification confirms your real identity before your first booking. This eliminates fake accounts, protects drivers from anonymous riders, and creates a legally accountable trail for every trip. No ride begins without a verified identity on both sides.' },
-  { q: 'What is the Wall of Shame?', a: 'The Wall of Shame is a public listing of riders who committed payment fraud, fraudulent chargebacks, or violent conduct — and failed to resolve it within the 48-hour window. Verified name and profile photo are published at tranzitta.ng/wall-of-shame. Every rider agrees to this policy at signup. BVN verification means identities are confirmed, not alleged.' },
-  { q: 'Why is there no cash option?', a: 'Cash creates disputes, exposes drivers to robbery, and removes the payment audit trail. Card hold and bank transfer cover every scenario — and create irrefutable proof of payment. No cash will ever be added to Tranzitta.' },
-  { q: 'How does the in-car camera protect me?', a: 'The camera records the interior throughout your trip. Footage is retained for 30 days. If any dispute, complaint, or chargeback arises, the footage is reviewed as evidence. It protects riders from false driver complaints — and drivers from false rider complaints. Both sides are protected equally.' },
-  { q: 'What is the difference between Go and Executive?', a: 'Go uses standard clean vehicles (max 5 years old) with live traffic fare calculation. Executive uses premium sedans or SUVs (max 3 years, luxury spec) with ops-assisted intelligent pricing — a fare is confirmed before your card is held. Executive drivers have a higher minimum rating and professional dress code.' },
+  { q: 'Why can I not keep requesting the same driver?', a: 'Tranzitta Go is not built around repeat-driver relationships because that can move riders and drivers outside the safety system. Each ride is matched inside the app, with Tranzitta-controlled pricing, GPS, camera trail, customer service and compliance protection.' },
+  { q: 'What is the Hall of Shame?', a: 'The Hall of Shame is Tranzitta’s escalation model for verified fraud, violent conduct or serious abuse after ops/legal review. Because users complete BVN, NIN, photo and identity checks, reports can be supported with real evidence and, where required, police escalation.' },
+  { q: 'Can riders pay cash?', a: 'Yes, Tranzitta Go can allow cash or direct driver-account payment, but the fare is still controlled by Tranzitta. The rider must mark paid in the app and the driver must mark received. If both sides do not agree, ops investigates using GPS, camera and trip records.' },
+  { q: 'How does the in-car camera protect me?', a: 'The camera records the trip for evidence and customer support. If any dispute, complaint, payment issue or misconduct arises, the footage can be reviewed by ops. It protects riders from false driver complaints and drivers from false rider complaints.' },
+  { q: 'What is the difference between Go and Executive?', a: 'Go uses standard clean vehicles with traffic-controlled pricing. Executive uses premium sedans or SUVs with a higher vehicle and driver standard. Both are matched inside the app and both block repeat-driver preference.' },
   { q: 'How does the surge pricing work?', a: 'Surge zones are drawn by ops on a live map — activated by high demand, peak hours, heavy rain, or low driver supply. The surge multiplier is shown clearly before you confirm booking. You must accept the surge fare. It is never applied mid-trip without your knowledge.' },
 ]
 
@@ -244,7 +245,7 @@ export default function GoPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 text-xs font-bold"
                   style={{ background: 'rgba(31,107,70,0.08)', color: '#1F6B46', border: '1px solid rgba(31,107,70,0.18)' }}>
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  Go & Executive · Lagos · Zero Cash · BVN Verified
+                  Go & Executive · Lagos · Driver Subscription · BVN Verified
                 </div>
                 <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-6" style={{ color: '#183024' }}>
                   The Ride That<br />
@@ -252,7 +253,7 @@ export default function GoPage() {
                   <span style={{ color: '#1F6B46' }}>Both of You.</span>
                 </h1>
                 <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0" style={{ color: '#65785F' }}>
-                  Nigeria&apos;s only ride-hailing platform with mandatory BVN verification, mutual pre-trip identity confirmation, in-car cameras, and a zero-cash policy with legal accountability for every trip.
+                  Nigeria&apos;s safety-first ride marketplace with mandatory BVN/NIN verification, mutual pre-trip identity confirmation, in-car cameras, app-controlled fares, and payment confirmation on both sides.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                   <Link href="/go/book"
@@ -267,7 +268,7 @@ export default function GoPage() {
                   </Link>
                 </div>
                 <div className="flex flex-wrap gap-3 mt-8 justify-center lg:justify-start">
-                  {['✓ BVN Verified', '✓ Zero Cash', '✓ In-Car Camera', '✓ Wall of Shame', '✓ Mutual Verification'].map(t => (
+                  {['✓ BVN + NIN', '✓ Driver Subscribed', '✓ In-Car Camera', '✓ Hall of Shame', '✓ No Repeat Driver'].map(t => (
                     <span key={t} className="text-xs font-bold px-3 py-1.5 rounded-full"
                       style={{ background: 'rgba(31,107,70,0.08)', color: '#1F6B46', border: '1px solid rgba(31,107,70,0.16)' }}>
                       {t}
@@ -357,7 +358,7 @@ export default function GoPage() {
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#1F6B46' }}>Two Tiers</div>
               <h2 className="text-4xl font-black" style={{ color: '#183024' }}>Go vs Executive</h2>
               <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: '#65785F' }}>
-                Both tiers carry the same security, zero-cash policy, mutual verification and camera system. The difference is the vehicle grade and pricing model.
+                Both tiers carry the same security, subscription-gated drivers, mutual verification and camera system. The difference is the vehicle grade and fare band.
               </p>
             </motion.div>
             <div className="grid md:grid-cols-2 gap-6">
@@ -428,16 +429,16 @@ export default function GoPage() {
               <div className="text-center mb-8">
                 <div className="text-5xl mb-4">⚖️</div>
                 <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#D96B1F' }}>Zero Tolerance</div>
-                <h2 className="text-3xl font-black mb-4" style={{ color: '#183024' }}>The Wall of Shame</h2>
+                <h2 className="text-3xl font-black mb-4" style={{ color: '#183024' }}>The Hall of Shame</h2>
                 <p className="text-base max-w-xl mx-auto" style={{ color: '#65785F' }}>
-                  Every rider signs a user agreement at signup. Payment fraud, fraudulent chargebacks, and violent conduct trigger a 48-hour resolution window. If unresolved — verified name and profile photo are published publicly.
+                  Every rider and driver signs a user agreement at signup. Payment fraud, violent conduct, identity abuse and off-platform trips can trigger ops review, police escalation and public social-channel publication where legally cleared.
                 </p>
               </div>
               <div className="grid md:grid-cols-3 gap-4 mb-8">
                 {[
-                  { trigger: '💸 Payment Fraud', desc: '48-hour window to resolve. Publish on no resolution.' },
-                  { trigger: '↩ Chargeback Fraud', desc: 'Contested with full evidence: GPS, camera, logs.' },
-                  { trigger: '🚨 Violent Conduct', desc: 'Immediate police report + permanent ban + listing.' },
+                  { trigger: '💸 Payment Fraud', desc: 'Rider and driver confirmations checked against GPS, camera and trip records.' },
+                  { trigger: '📵 Off-App Abuse', desc: 'Direct bypass attempts can suspend driver access and rider protection.' },
+                  { trigger: '🚨 Violent Conduct', desc: 'Police report, permanent ban and public escalation after review.' },
                 ].map((w, i) => (
                   <div key={i} className="rounded-2xl p-5 bg-white border" style={{ borderColor: '#DDE9D2' }}>
                     <div className="font-extrabold text-sm mb-2" style={{ color: '#183024' }}>{w.trigger}</div>
@@ -446,7 +447,7 @@ export default function GoPage() {
                 ))}
               </div>
               <div className="rounded-2xl p-5 border text-sm" style={{ background: 'white', borderColor: '#DDE9D2', color: '#65785F' }}>
-                🔐 BVN verification means every listing is a <strong style={{ color: '#183024' }}>confirmed identity</strong> — not an allegation. Tranzitta&apos;s legal team reviews every listing before publication. This is signed into the user agreement at account creation.
+                🔐 BVN, NIN, photo and liveness checks mean serious cases are tied to a <strong style={{ color: '#183024' }}>confirmed identity</strong>. Tranzitta ops/legal reviews every public escalation before anything is published.
               </div>
             </div>
           </div>
@@ -457,30 +458,30 @@ export default function GoPage() {
           <div className="max-w-4xl mx-auto">
             <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#1F6B46' }}>Payment</div>
-              <h2 className="text-4xl font-black" style={{ color: '#183024' }}>Zero Cash. Two Ways to Pay.</h2>
+              <h2 className="text-4xl font-black" style={{ color: '#183024' }}>Driver Gets the Fare. Tranzitta Controls the Price.</h2>
             </motion.div>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  method: '💳 Card Hold',
+                  method: '🏦 Driver Account',
                   steps: [
-                    'Estimated fare calculated with live traffic',
-                    'Card authorised and held at booking',
-                    'Trip runs — GPS tracks actual distance and time',
-                    'Actual fare charged at trip end',
-                    'If lower — hold released. If higher (traffic) — difference charged.',
-                    'Receipt via push and email immediately',
+                    'Tranzitta calculates the fare using route, demand and traffic',
+                    'Driver accepts the ride at the Tranzitta fare',
+                    'Rider pays the driver account shown inside the app',
+                    'Rider marks paid',
+                    'Driver marks received',
+                    'Trip closes only when confirmation matches',
                   ],
                 },
                 {
-                  method: '🏦 Bank Transfer',
+                  method: '💵 Cash With App Confirmation',
                   steps: [
-                    'Unique virtual account generated per trip',
-                    'Rider transfers estimated fare to virtual account',
-                    'System auto-confirms receipt — driver proceeds',
-                    '10-minute window — expire and rebook if not transferred',
-                    'Actual fare reconciled at trip end',
-                    'Underpayment blocked on next booking. Overpayment refunded within 24hrs.',
+                    'Cash may be accepted only at the Tranzitta fare',
+                    'No negotiation or side pricing',
+                    'Rider confirms amount paid in the app',
+                    'Driver confirms amount received in the app',
+                    'Mismatch opens a customer service case',
+                    'Repeated abuse can trigger suspension, police report or Hall of Shame review',
                   ],
                 },
               ].map((pm, i) => (
@@ -544,7 +545,7 @@ export default function GoPage() {
                 <span style={{ color: '#D96B1F' }}>Verified. Confirmed. Ready.</span>
               </h2>
               <p className="text-lg mb-10" style={{ color: '#65785F' }}>
-                Book your next ride in seconds. No cash. No guessing who&apos;s behind the wheel. Every trip covered by camera, BVN verification, and legal accountability.
+                Book your next ride in seconds. Tranzitta controls the fare, subscribed drivers select the ride, and every trip is covered by camera, BVN/NIN verification, payment confirmation and legal accountability.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/go/book"
