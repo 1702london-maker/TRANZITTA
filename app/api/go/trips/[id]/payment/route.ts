@@ -3,7 +3,7 @@ import { asNumber, asString, readJson, requireFields, serverError } from '@/lib/
 import { requireAuth } from '@/lib/server-auth'
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = await requireAuth(req, ['rider', 'driver', 'ops', 'superadmin'])
+  const auth = await requireAuth(req, ['rider', 'parent', 'driver', 'ops', 'superadmin'])
   if (!auth.ok) return auth.response
 
   const parsed = await readJson<Record<string, unknown>>(req)
